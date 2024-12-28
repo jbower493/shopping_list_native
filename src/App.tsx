@@ -4,14 +4,25 @@ import { createStaticNavigation, useNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Button } from '@react-navigation/elements'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import Icon from 'react-native-vector-icons/Ionicons'
 
-function SignInScreen() {
+function LoginScreen() {
     const { signIn } = useContext(AuthContext)
+    const navigation = useNavigation()
 
     return (
         <View style={styles.main}>
-            <Text>Sign In Screen</Text>
+            <Text>Login Screen</Text>
             <Button onPress={() => signIn()}>Sign In</Button>
+            <Button onPress={() => navigation.navigate('Register')}>Register</Button>
+        </View>
+    )
+}
+
+function RegisterScreen() {
+    return (
+        <View style={styles.main}>
+            <Text>Register Screen</Text>
         </View>
     )
 }
@@ -89,13 +100,15 @@ const ListsStack = createNativeStackNavigator({
         ListsHome: {
             screen: ListsScreen,
             options: {
-                headerShown: true
+                headerShown: true,
+                title: 'Lists'
             }
         },
         SingleList: {
             screen: SingleListScreen,
             options: {
-                headerShown: true
+                headerShown: true,
+                title: 'Single List'
             }
         }
     }
@@ -106,7 +119,13 @@ const MyTabs = createBottomTabNavigator({
         Lists: {
             screen: ListsStack,
             options: {
-                headerShown: false
+                headerShown: false,
+                tabBarLabelStyle: {
+                    color: 'red'
+                },
+                tabBarIcon: ({color, size}) => (
+                    <Icon name="home" size={size} color={color} />
+                )
             }
         },
         Recipes: {
@@ -162,7 +181,8 @@ const RootStack = createNativeStackNavigator({
         LoggedOut: {
             if: useIsSignedOut,
             screens: {
-                SignIn: SignInScreen
+                Login: LoginScreen,
+                Register: RegisterScreen,
             }
         }
     }
