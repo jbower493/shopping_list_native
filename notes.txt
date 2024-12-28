@@ -1,2 +1,4 @@
 manually install @react-native/gradle-plugin": "^0.76.3" (has to be this version), it was previously installed as a dep of a dep
 rename the file inside of android/.gradle/8.10.2/dependency-accessors to the one that ends with babae10 or something. delete other one(s)
+
+splash screen bg color is in android\app\src\main\res\values\colors.xml, but not sure if this actually gets shown unless you have a splash image with a transparent background
