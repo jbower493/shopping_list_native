@@ -3,12 +3,17 @@ import { createStaticNavigation } from '@react-navigation/native'
 import { FullScreenLoader } from './components/Loader/FullScreen'
 import { RootStack } from './navigation/rootStackNavigator'
 import { AuthContext } from './containers/auth/context'
+import SplashScreen from 'react-native-splash-screen'
 
 const Navigation = createStaticNavigation(RootStack)
 
 export function App() {
     const [isSignedIn, setIsSignedIn] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        SplashScreen.hide()
+    }, [])
 
     useEffect(() => {
         setTimeout(() => {
