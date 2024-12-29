@@ -3,7 +3,7 @@ import { createStaticNavigation } from '@react-navigation/native'
 import { FullScreenLoader } from './components/Loader/FullScreen'
 import { RootStack } from './navigation/rootStackNavigator'
 import { AuthContext } from './containers/auth/context'
-import SplashScreen from 'react-native-splash-screen'
+import RNBootSplash from 'react-native-bootsplash'
 
 const Navigation = createStaticNavigation(RootStack)
 
@@ -12,7 +12,13 @@ export function App() {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        SplashScreen.hide()
+        const init = async () => {
+            // …do multiple sync or async tasks
+        }
+
+        init().finally(async () => {
+            await RNBootSplash.hide({ fade: true })
+        })
     }, [])
 
     useEffect(() => {

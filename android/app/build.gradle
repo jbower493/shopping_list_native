@@ -116,6 +116,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation "androidx.core:core-splashscreen:1.0.0-beta01"
 }
 
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
