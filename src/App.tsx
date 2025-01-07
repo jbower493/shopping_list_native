@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { createStaticNavigation } from '@react-navigation/native'
 import { FullScreenLoader } from './components/Loader/FullScreen'
 import { RootStack } from './navigation/rootStackNavigator'
-import { AuthContext } from './containers/auth/context'
 import RNBootSplash from 'react-native-bootsplash'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './queries/utils/queryClient'
+import { FetchContext } from './queries/utils/fetchContext'
+import { axiosInstance } from './queries/utils/axiosInstance'
+import { query } from './queries'
 
 const Navigation = createStaticNavigation(RootStack)
 
-export function App() {
-    const [isSignedIn, setIsSignedIn] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+function TopLevelComponent() {
+    const { isFetching: isUserFetching } = query.auth.user.useQuery()
 
     useEffect(() => {
         const init = async () => {
@@ -21,29 +24,19 @@ export function App() {
         })
     }, [])
 
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 2000)
-    }, [])
-
-    const authContext = {
-        signIn: () => {
-            setIsSignedIn(true)
-        },
-        signOut: () => {
-            setIsSignedIn(false)
-        },
-        isSignedIn
-    }
-
-    if (isLoading) {
+    if (isUserFetching) {
         return <FullScreenLoader />
     }
 
+    return <Navigation />
+}
+
+export function App() {
     return (
-        <AuthContext.Provider value={authContext}>
-            <Navigation />
-        </AuthContext.Provider>
+        <FetchContext.Provider value={{ axiosInstance: axiosInstance }}>
+            <QueryClientProvider client={queryClient}>
+                <TopLevelComponent />
+            </QueryClientProvider>
+        </FetchContext.Provider>
     )
 }
