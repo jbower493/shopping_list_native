@@ -12,7 +12,9 @@ import { query } from './queries'
 const Navigation = createStaticNavigation(RootStack)
 
 function TopLevelComponent() {
-    const { isFetching: isUserFetching } = query.auth.user.useQuery()
+    const { isFetching: isUserFetching, status, error } = query.auth.user.useQuery()
+
+    console.log(status, error)
 
     useEffect(() => {
         const init = async () => {
