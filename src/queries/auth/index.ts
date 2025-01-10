@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Credentials, User, UserDataAdditionalUser } from './types'
+import { Credentials, RegisterCredentials, User, UserDataAdditionalUser } from './types'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
 import { MutationResponse, QueryResponse } from '../utils/types'
@@ -26,25 +26,26 @@ export function useUserQuery() {
 }
 
 /***** Login *****/
-
 export function useLoginMutation() {
     const { axiosInstance } = useContext(FetchContext)
 
-    const login = (credentials: Credentials): Promise<MutationResponse> => axiosInstance.post('/login', credentials)
+    const login = (credentials: Credentials): Promise<MutationResponse> => axiosInstance.post('/api/login', credentials)
 
     return useMutation({
         mutationFn: login
     })
 }
 
-// /***** Register *****/
-// const register = (credentials: RegisterCredentials): Promise<MutationResponse> => axios.post('/register', credentials)
+/***** Register *****/
+export function useRegisterMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// export function useRegisterMutation() {
-//     return useMutation({
-//         mutationFn: register
-//     })
-// }
+    const register = (credentials: RegisterCredentials): Promise<MutationResponse> => axiosInstance.post('/api/register', credentials)
+
+    return useMutation({
+        mutationFn: register
+    })
+}
 
 // /***** Logout *****/
 // const logout = (): Promise<MutationResponse> => axios.get('/logout')

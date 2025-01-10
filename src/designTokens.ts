@@ -1,8 +1,14 @@
 const primitive = {
-    primary: '#10B981'
+    colorPrimary: '#10B981',
+
+    borderRadius5: 5
 }
 
 export const semantic = {
-    colorTextPrimary: primitive.primary,
-    colorBackgroundPrimary: primitive.primary,
+    colorTextPrimary: primitive.colorPrimary,
+    colorBackgroundPrimary: primitive.colorPrimary,
+
+    colorBorderPrimary: primitive.colorPrimary,
+
+    borderRadiusDefault: primitive.borderRadius5
 }

@@ -1,4 +1,4 @@
-import { useLoginMutation, userQueryKey, useUserQuery } from './auth'
+import { useLoginMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 
 export const query = {
     auth: {
@@ -8,6 +8,9 @@ export const query = {
         },
         login: {
             useMutation: useLoginMutation
+        },
+        register: {
+            useMutation: useRegisterMutation
         }
     }
 }
