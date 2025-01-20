@@ -29,7 +29,7 @@ export function useUserQuery() {
 export function useLoginMutation() {
     const { axiosInstance } = useContext(FetchContext)
 
-    const login = (credentials: Credentials): Promise<MutationResponse> => axiosInstance.post('/api/login', credentials)
+    const login = (credentials: Credentials): Promise<MutationResponse<{ token: string }>> => axiosInstance.post('/api/login', credentials)
 
     return useMutation({
         mutationFn: login
@@ -48,13 +48,16 @@ export function useRegisterMutation() {
 }
 
 // /***** Logout *****/
-// const logout = (): Promise<MutationResponse> => axios.get('/logout')
 
-// export function useLogoutMutation() {
-//     return useMutation({
-//         mutationFn: logout
-//     })
-// }
+export function useLogoutMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+
+    const logout = (): Promise<MutationResponse> => axiosInstance.get('/api/logout')
+
+    return useMutation({
+        mutationFn: logout
+    })
+}
 
 // /***** Request password reset *****/
 // const requestPaswordReset = (payload: RequestPasswordResetPayload): Promise<MutationResponse> => axios.post('/forgot-password', payload)

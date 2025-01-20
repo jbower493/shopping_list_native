@@ -4,8 +4,10 @@ type ButtonProps = {
     color: string
     title: string
     onPress?: ((event: GestureResponderEvent) => void) | undefined
+    isDisabled?: boolean
+    isLoading?: boolean
 }
 
-export function Button({ color, title, onPress }: ButtonProps) {
-    return <RNButton color={color} title={title} onPress={onPress} />
+export function Button({ color, title, onPress, isDisabled, isLoading }: ButtonProps) {
+    return <RNButton disabled={isDisabled || isLoading} color={color} title={isLoading ? 'Loading...' : title} onPress={onPress} />
 }

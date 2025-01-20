@@ -17,36 +17,28 @@ export const TabsNavigator = createBottomTabNavigator({
             screen: ListsStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({color, size}) => (
-                    <MaterialCommunityIcon name="format-list-bulleted" size={size} color={color} />
-                )
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='format-list-bulleted' size={size} color={color} />
             }
         },
         Recipes: {
             screen: RecipesStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({color, size}) => (
-                    <MaterialCommunityIcon name="food-variant" size={size} color={color} />
-                )
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='food-variant' size={size} color={color} />
             }
         },
         Menus: {
             screen: MenusStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({color, size}) => (
-                    <MaterialIcon name="restaurant-menu" size={size} color={color} />
-                )
+                tabBarIcon: ({ color, size }) => <MaterialIcon name='restaurant-menu' size={size} color={color} />
             }
         },
         Items: {
             screen: ItemsStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({color, size}) => (
-                    <MaterialCommunityIcon name="food-apple" size={size} color={color} />
-                )
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='food-apple' size={size} color={color} />
             }
         }
     }

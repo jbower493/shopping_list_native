@@ -1,43 +1,89 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { semantic } from '../../../designTokens'
-import { useState } from 'react'
 import { Button } from '../../../components/Button'
 import { query } from '../../../queries'
+import { Input } from '../../../components/Form/Input'
+import * as z from 'zod'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormRow } from '../../../components/Form/FormRow'
+import { useQueryClient } from '@tanstack/react-query'
+
+type Inputs = {
+    name: string
+    email: string
+    password: string
+    confirm_password: string
+}
+
+const schema = z
+    .object({
+        name: z.string().min(1, 'Required'),
+        email: z.string().min(1, 'Required'),
+        password: z.string().min(1, 'Required'),
+        confirm_password: z.string().min(1, 'Required')
+    })
+    .refine((values) => values.password === values.confirm_password, {
+        path: ['confirm_password'],
+        message: 'Must match "Password" field'
+    })
 
 export function RegisterScreen() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
+    const queryClient = useQueryClient()
 
-    const { mutate: register } = query.auth.register.useMutation()
+    const { mutateAsync: register } = query.auth.register.useMutation()
 
-    function handleRegister() {
-        register(
-            { email, password, name },
-            {
-                onSuccess: () => {
-                    console.log('success')
-                }
+    const methods = useForm<Inputs>({
+        mode: 'all',
+        resolver: zodResolver(schema),
+        defaultValues: {
+            name: '',
+            email: '',
+            password: '',
+            confirm_password: ''
+        }
+    })
+
+    const {
+        handleSubmit,
+        formState: { isSubmitting, isValid }
+    } = methods
+
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        await register(data, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: query.auth.user.queryKey })
             }
-        )
+        })
     }
 
     return (
         <View style={styles.main}>
             <View style={styles.container}>
-                <Text style={styles.heading}>Register</Text>
-                <Text style={styles.label}>Name</Text>
-                <TextInput style={styles.input} onChangeText={setName} value={name} />
-                <Text style={styles.label}>Email</Text>
-                <TextInput style={styles.input} onChangeText={setEmail} value={email} />
-                <Text style={styles.label}>Password</Text>
-                <TextInput style={styles.input} onChangeText={setPassword} value={password} />
-                <Text style={styles.label}>Confirm Password</Text>
-                <TextInput style={styles.input} onChangeText={setConfirmPassword} value={confirmPassword} />
-                <View style={styles.buttonView}>
-                    <Button color={semantic.colorBackgroundPrimary} title='Register' onPress={handleRegister} />
-                </View>
+                <FormProvider {...methods}>
+                    <Text style={styles.heading}>Register</Text>
+                    <FormRow>
+                        <Input.HookForm label='Name' name='name' />
+                    </FormRow>
+                    <FormRow>
+                        <Input.HookForm label='Email' name='email' inputMode='email' />
+                    </FormRow>
+                    <FormRow>
+                        <Input.HookForm label='Password' name='password' secureTextEntry />
+                    </FormRow>
+                    <FormRow>
+                        <Input.HookForm label='Confirm Password' name='confirm_password' secureTextEntry />
+                    </FormRow>
+                    <View style={styles.buttonView}>
+                        <Button
+                            isLoading={isSubmitting}
+                            isDisabled={!isValid}
+                            color={semantic.colorBackgroundPrimary}
+                            title='Register'
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                    </View>
+                </FormProvider>
             </View>
         </View>
     )
@@ -61,17 +107,7 @@ const styles = StyleSheet.create({
         fontWeight: 600,
         textAlign: 'center'
     },
-    label: {
-        marginTop: 14
-    },
-    input: {
-        height: 36,
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: '#d1d5db',
-        padding: 8
-    },
     buttonView: {
-        marginTop: 14
+        marginTop: 10
     }
 })
