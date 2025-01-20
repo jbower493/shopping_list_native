@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { semantic } from '../../../designTokens'
 import { Button } from '../../../components/Button'
 import { query } from '../../../queries'
@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormRow } from '../../../components/Form/FormRow'
 import { useQueryClient } from '@tanstack/react-query'
 import { storeToken } from '../../../queries/utils/tokenStorage'
+import { useNavigation } from '@react-navigation/native'
 
 type Inputs = {
     email: string
@@ -22,6 +23,7 @@ const schema = z.object({
 
 export function LoginScreen() {
     const queryClient = useQueryClient()
+    const navigation = useNavigation()
 
     const { mutateAsync: login } = query.auth.login.useMutation()
 
@@ -42,11 +44,11 @@ export function LoginScreen() {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await login(data, {
             onSuccess: async (response) => {
-                queryClient.invalidateQueries({ queryKey: query.auth.user.queryKey })
-
                 if (response.data) {
                     await storeToken(response.data?.token)
                 }
+
+                queryClient.invalidateQueries({ queryKey: query.auth.user.queryKey })
             }
         })
     }
@@ -71,6 +73,12 @@ export function LoginScreen() {
                             onPress={handleSubmit(onSubmit)}
                         />
                     </View>
+                    <Pressable
+                        onPress={() => navigation.navigate('Register')}
+                        style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, marginTop: 20 })}
+                    >
+                        <Text>Register</Text>
+                    </Pressable>
                 </FormProvider>
             </View>
         </View>

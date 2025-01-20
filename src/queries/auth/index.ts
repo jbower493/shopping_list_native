@@ -40,7 +40,8 @@ export function useLoginMutation() {
 export function useRegisterMutation() {
     const { axiosInstance } = useContext(FetchContext)
 
-    const register = (credentials: RegisterCredentials): Promise<MutationResponse> => axiosInstance.post('/api/register', credentials)
+    const register = (credentials: RegisterCredentials): Promise<MutationResponse<{ token: string }>> =>
+        axiosInstance.post('/api/register', credentials)
 
     return useMutation({
         mutationFn: register

@@ -8,6 +8,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormRow } from '../../../components/Form/FormRow'
 import { useQueryClient } from '@tanstack/react-query'
+import { storeToken } from '../../../queries/utils/tokenStorage'
 
 type Inputs = {
     name: string
@@ -51,7 +52,11 @@ export function RegisterScreen() {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await register(data, {
-            onSuccess: () => {
+            onSuccess: async (response) => {
+                if (response.data) {
+                    await storeToken(response.data?.token)
+                }
+
                 queryClient.invalidateQueries({ queryKey: query.auth.user.queryKey })
             }
         })
