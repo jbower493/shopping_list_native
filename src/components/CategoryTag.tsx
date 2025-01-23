@@ -1,47 +1,44 @@
 import React from 'react'
-import { getCategoryColor, getRecipeCategoryColor } from '../utils/functions'
+import { getCategoryColor } from '../utils/functions'
 import type { Category } from '../queries/categories/types'
 import { RecipeCategory } from '../queries/recipeCategories/types'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface CategoryTagProps {
     categoriesData: Category[] | RecipeCategory[]
     categoryName: string
     size?: 'sm' | 'md'
     className?: string
-    isRecipeCategory?: boolean
 }
 
-export function CategoryTag({ categoriesData, categoryName, size, className, isRecipeCategory }: CategoryTagProps) {
-    const getSize = () => {
-        if (size === 'sm') {
-            return 'px-2 h-5 text-xs'
-        }
-        if (size === 'md') {
-            return 'px-3 h-6 text-sm'
-        }
-        return 'px-4 h-7'
-    }
+export function CategoryTag({ categoriesData, categoryName }: CategoryTagProps) {
+    // const getSize = () => {
+    //     if (size === 'sm') {
+    //         return 'px-2 h-5 text-xs'
+    //     }
+    //     if (size === 'md') {
+    //         return 'px-3 h-6 text-sm'
+    //     }
+    //     return 'px-4 h-7'
+    // }
 
     return (
-        <Text
-            style={styles.tag}
-            // className={`flex items-center rounded-full pb-[1px] w-fit ${getSize()} ${
-            //     !isRecipeCategory ? getCategoryColor(categoriesData, categoryName) : getRecipeCategoryColor(categoriesData, categoryName)
-            // } text-white ${className}`}
-        >
-            {categoryName}
-        </Text>
+        <View style={styles.container}>
+            <Text style={[styles.tag, { backgroundColor: getCategoryColor(categoriesData, categoryName) }]}>{categoryName}</Text>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row'
+    },
     tag: {
-        alignItems: 'center',
-        backgroundColor: 'red',
         color: 'white',
         borderRadius: 40,
-        height: 20
-        // padding: '0 10'
+        height: 26,
+        paddingHorizontal: 16,
+        textAlignVertical: 'center',
+        paddingBottom: 1
     }
 })

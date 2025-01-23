@@ -8,6 +8,7 @@ module.exports = {
         '@typescript-eslint/ban-ts-comment': ['off'],
         'react/react-in-jsx-scope': ['off'],
         'comma-dangle': 'off',
-        'jsx-quotes': 'off'
+        'jsx-quotes': 'off',
+        'react-native/no-inline-styles': 'off'
     }
 }

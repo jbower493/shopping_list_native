@@ -94,7 +94,7 @@ export function RecipesScreen() {
                 <Button title='Add New' onPress={() => {}} />
                 <Input containerStyle={styles.search} placeholder='Search for a recipe' value={search} onChangeText={(text) => setSearch(text)} />
             </View>
-            {filteredRecipes.length > 0 ? renderCurrentRecipes() : <Text style={styles.noRecipeMessage}>{noRecipesMessage}</Text>}
+            <View style={styles.bottomContainer}>{filteredRecipes.length > 0 ? renderCurrentRecipes() : <Text>{noRecipesMessage}</Text>}</View>
         </View>
     )
 }
@@ -119,7 +119,10 @@ const styles = StyleSheet.create({
     search: {
         width: 220
     },
-    noRecipeMessage: {
+    bottomContainer: {
         marginTop: 30
+    },
+    uncategorizedInstructions: {
+        opacity: 0.6
     }
 })
