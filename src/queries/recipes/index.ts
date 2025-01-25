@@ -1,10 +1,13 @@
 import {
+    QueryClient,
     useMutation,
     useQuery,
     useQueryClient
     // useMutation
 } from '@tanstack/react-query'
 import {
+    DetailedRecipe,
+    NewRecipe,
     Recipe
     // NewRecipe,
     // DetailedRecipe,
@@ -22,6 +25,7 @@ import type {
 import { QueryKeySet } from '../utils/keyFactory'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
+import { AxiosInstance } from 'axios'
 // import { fireErrorNotification, queryClient } from '../utils/queryClient'
 // import { categoriesQueryKey, getCategories } from 'containers/categories/queries'
 // import { getItems, itemsQueryKey } from 'containers/items/queries'
@@ -34,34 +38,37 @@ const recipesKeySet = new QueryKeySet('Recipe')
 // export type GetRecipesReturnType = ReturnType<typeof getRecipes>
 export const recipesQueryKey = recipesKeySet.many
 
+const getRecipes = (axiosInstance: AxiosInstance): Promise<QueryResponse<{ recipes: Recipe[] }>> => axiosInstance.get('/api/recipe')
+
 export function useRecipesQuery() {
     const { axiosInstance } = useContext(FetchContext)
 
-    const getRecipes = (): Promise<QueryResponse<{ recipes: Recipe[] }>> => axiosInstance.get('/api/recipe')
-
     return useQuery({
         queryKey: recipesQueryKey(),
-        queryFn: getRecipes,
+        queryFn: () => getRecipes(axiosInstance),
         select: (res) => res.data.recipes
     })
 }
 
-// export function prefetchGetRecipesQuery() {
-//     queryClient.prefetchQuery({ queryKey: recipesQueryKey(), queryFn: getRecipes })
-// }
+export function prefetchRecipesQuery(queryClient: QueryClient, axiosInstance: AxiosInstance) {
+    queryClient.prefetchQuery({ queryKey: recipesQueryKey(), queryFn: () => getRecipes(axiosInstance) })
+}
 
-// /***** Create recipe *****/
-// const createRecipe = (newRecipe: NewRecipe): Promise<MutationResponse<{ recipe_id: number }>> => axios.post('/recipe', newRecipe)
+/***** Create recipe *****/
+export function useCreateRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
-// export function useCreateRecipeMutation() {
-//     return useMutation({
-//         mutationFn: createRecipe,
-//         onSuccess(res) {
-//             queryClient.invalidateQueries(recipesQueryKey())
-//             prefetchSingleRecipeQuery(res.data?.recipe_id.toString() || '')
-//         }
-//     })
-// }
+    const createRecipe = (newRecipe: NewRecipe): Promise<MutationResponse<{ recipe_id: number }>> => axiosInstance.post('/api/recipe', newRecipe)
+
+    return useMutation({
+        mutationFn: createRecipe,
+        onSuccess(res) {
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+            prefetchSingleRecipeQuery(res.data?.recipe_id.toString() || '', queryClient, axiosInstance)
+        }
+    })
+}
 
 /***** Delete recipe *****/
 export function useDeleteRecipeMutation() {
@@ -78,24 +85,28 @@ export function useDeleteRecipeMutation() {
     })
 }
 
-// /***** Get single recipe *****/
-// const getSingleRecipe = (id: string): Promise<QueryResponse<{ recipe: DetailedRecipe }>> => axios.get(`/recipe/${id}`)
-// export const singleRecipeQueryKey = recipesKeySet.one
+/***** Get single recipe *****/
+export const singleRecipeQueryKey = recipesKeySet.one
 
-// export function useGetSingleRecipeQuery(id: string) {
-//     return useQuery({
-//         queryKey: singleRecipeQueryKey(id),
-//         queryFn: () => getSingleRecipe(id),
-//         select: (res) => res.data.recipe
-//     })
-// }
+const getSingleRecipe = (id: string, axiosInstance: AxiosInstance): Promise<QueryResponse<{ recipe: DetailedRecipe }>> =>
+    axiosInstance.get(`/api/recipe/${id}`)
 
-// export function prefetchSingleRecipeQuery(recipeId: string) {
-//     queryClient.prefetchQuery({
-//         queryKey: singleRecipeQueryKey(recipeId),
-//         queryFn: () => getSingleRecipe(recipeId)
-//     })
-// }
+export function useSingleRecipeQuery(id: string) {
+    const { axiosInstance } = useContext(FetchContext)
+
+    return useQuery({
+        queryKey: singleRecipeQueryKey(id),
+        queryFn: () => getSingleRecipe(id, axiosInstance),
+        select: (res) => res.data.recipe
+    })
+}
+
+export function prefetchSingleRecipeQuery(recipeId: string, queryClient: QueryClient, axiosInstance: AxiosInstance) {
+    queryClient.prefetchQuery({
+        queryKey: singleRecipeQueryKey(recipeId),
+        queryFn: () => getSingleRecipe(recipeId, axiosInstance)
+    })
+}
 
 // /***** Add item to recipe *****/
 // const addItemToRecipe = ({ recipeId, itemName, categoryId, quantity, quantityUnitId }: AddItemToRecipePayload): Promise<MutationResponse> => {

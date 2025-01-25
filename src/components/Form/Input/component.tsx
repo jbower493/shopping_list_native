@@ -1,6 +1,7 @@
 import React from 'react'
 import {
     InputModeOptions,
+    KeyboardTypeOptions,
     NativeSyntheticEvent,
     StyleProp,
     StyleSheet,
@@ -19,24 +20,42 @@ type InputFieldProps = {
     value?: string
     onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void
     inputMode?: InputModeOptions
+    keyboardType?: KeyboardTypeOptions
     secureTextEntry?: boolean
     containerStyle?: StyleProp<ViewStyle>
+    isTextArea?: boolean
+    style?: StyleProp<ViewStyle>
 }
 
 type TInputField = React.FC<InputFieldProps>
 
-export const InputComponent: TInputField = ({ label, placeholder, onChangeText, value, onBlur, inputMode, secureTextEntry, containerStyle }) => {
+export const InputComponent: TInputField = ({
+    label,
+    placeholder,
+    onChangeText,
+    value,
+    onBlur,
+    inputMode,
+    keyboardType,
+    secureTextEntry,
+    containerStyle,
+    isTextArea,
+    style
+}) => {
     return (
-        <View style={containerStyle}>
+        <View style={[containerStyle, style]}>
             {label ? <Text style={styles.label}>{label}</Text> : null}
             <TextInput
-                style={styles.input}
+                style={[styles.input, isTextArea ? styles.textArea : null]}
                 onChangeText={onChangeText}
                 value={value}
                 placeholder={placeholder}
                 onBlur={onBlur}
                 inputMode={inputMode}
+                keyboardType={keyboardType}
                 secureTextEntry={secureTextEntry}
+                multiline={!!isTextArea}
+                numberOfLines={isTextArea ? 4 : undefined}
             />
         </View>
     )
@@ -51,5 +70,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: semantic.colorBorderDefault,
         padding: 8
+    },
+    textArea: {
+        height: 100,
+        textAlignVertical: 'top'
     }
 })

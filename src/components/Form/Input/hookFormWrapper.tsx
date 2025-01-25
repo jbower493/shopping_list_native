@@ -1,6 +1,6 @@
 import React from 'react'
 import { useController } from 'react-hook-form'
-import { InputModeOptions, View } from 'react-native'
+import { InputModeOptions, KeyboardTypeOptions, StyleProp, View, ViewStyle } from 'react-native'
 import { InputComponent } from './component'
 import { ErrorMessage } from '../ErrorMessage'
 
@@ -9,14 +9,26 @@ type InputHookFormWrapperProps = {
     label?: string
     placeholder?: string
     inputMode?: InputModeOptions
+    keyboardType?: KeyboardTypeOptions
     secureTextEntry?: boolean
+    isTextArea?: boolean
+    style?: StyleProp<ViewStyle>
 }
 
-export function InputHookFormWrapper({ name, label, placeholder, inputMode, secureTextEntry }: InputHookFormWrapperProps) {
+export function InputHookFormWrapper({
+    name,
+    label,
+    placeholder,
+    inputMode,
+    keyboardType,
+    secureTextEntry,
+    isTextArea,
+    style
+}: InputHookFormWrapperProps) {
     const { field, fieldState } = useController({ name })
 
     return (
-        <View>
+        <View style={style}>
             <InputComponent
                 label={label}
                 placeholder={placeholder}
@@ -24,7 +36,9 @@ export function InputHookFormWrapper({ name, label, placeholder, inputMode, secu
                 value={field.value}
                 onBlur={field.onBlur}
                 inputMode={inputMode}
+                keyboardType={keyboardType}
                 secureTextEntry={secureTextEntry}
+                isTextArea={isTextArea}
             />
             <ErrorMessage error={fieldState.isTouched && fieldState.error} />
         </View>

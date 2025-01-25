@@ -8,6 +8,7 @@ import { getExistingRecipeCategories } from '../../../utils/functions'
 import { CategoryTag } from '../../../components/CategoryTag'
 import { Link } from '../../../components/Link'
 import { DeleteRecipe } from '../components/deleteRecipe'
+import { NewRecipe } from '../components/newRecipe'
 
 export function RecipesScreen() {
     const [search, setSearch] = useState('')
@@ -87,7 +88,7 @@ export function RecipesScreen() {
         <View style={styles.main}>
             <Text style={styles.title}>Recipes</Text>
             <View style={styles.buttonContainer}>
-                <Button onPress={() => {}}>Add New</Button>
+                <NewRecipe />
                 <Input containerStyle={styles.search} placeholder='Search for a recipe' value={search} onChangeText={(text) => setSearch(text)} />
             </View>
             <View style={styles.bottomContainer}>{filteredRecipes.length > 0 ? renderCurrentRecipes() : <Text>{noRecipesMessage}</Text>}</View>
