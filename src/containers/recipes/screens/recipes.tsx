@@ -6,10 +6,8 @@ import { query } from '../../../queries'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import { getExistingRecipeCategories } from '../../../utils/functions'
 import { CategoryTag } from '../../../components/CategoryTag'
-
-function Link() {
-    return <Text>Link</Text>
-}
+import { Link } from '../../../components/Link'
+import { DeleteRecipe } from '../components/deleteRecipe'
 
 export function RecipesScreen() {
     const [search, setSearch] = useState('')
@@ -51,31 +49,29 @@ export function RecipesScreen() {
             recipeslist.sort()
 
             return (
-                <View key={recipeCategoryId}>
+                <View style={styles.category} key={recipeCategoryId}>
                     <View>
                         <CategoryTag
                             categoriesData={recipeCategoriesOfExistingRecipes.filter(({ id }) => id !== -1)}
                             categoryName={recipeCategoryName}
                         />
-                        {recipeCategoryId === -1 ? <Text>Edit the recipe to assign it to a category</Text> : null}
+                        {recipeCategoryId === -1 ? (
+                            <Text style={styles.uncategorizedInstructions}>Edit the recipe to assign it to a category</Text>
+                        ) : null}
                     </View>
-                    {/* <ul>
+                    <View>
                         {recipeslist.map((recipe) => (
-                            <div key={recipe.id} className='flex justify-between w-full max-w-md mb-2'>
-                                <Link to={`/recipes/edit/${recipe.id}`} className='text-black hover:text-black'>
-                                    {recipe.name}
+                            <View style={styles.recipe} key={recipe.id}>
+                                <Link onPress={() => console.log('Navigate to edit recipe')}>
+                                    <Text>{recipe.name}</Text>
                                 </Link>
-                                <div>
-                                    <button className='mr-4' type='button' onClick={() => navigate(`/recipes/edit/${recipe.id}`)}>
-                                        <PencilSquareIcon className='w-5 text-primary hover:text-primary-hover' />
-                                    </button>
-                                    <button type='button' onClick={() => navigate(`/recipes/delete/${recipe.id}`)}>
-                                        <TrashIcon className='w-5 text-primary hover:text-primary-hover' />
-                                    </button>
-                                </div>
-                            </div>
+                                {/* <Pressable onPress={() => console.log('Open delete modal')}>
+                                    <MaterialCommunityIcon name='delete' size={22} color={semantic.colorTextPrimary} />
+                                </Pressable> */}
+                                <DeleteRecipe recipeId={recipe.id} recipeName={recipe.name} />
+                            </View>
                         ))}
-                    </ul> */}
+                    </View>
                 </View>
             )
         }
@@ -91,7 +87,7 @@ export function RecipesScreen() {
         <View style={styles.main}>
             <Text style={styles.title}>Recipes</Text>
             <View style={styles.buttonContainer}>
-                <Button title='Add New' onPress={() => {}} />
+                <Button onPress={() => {}}>Add New</Button>
                 <Input containerStyle={styles.search} placeholder='Search for a recipe' value={search} onChangeText={(text) => setSearch(text)} />
             </View>
             <View style={styles.bottomContainer}>{filteredRecipes.length > 0 ? renderCurrentRecipes() : <Text>{noRecipesMessage}</Text>}</View>
@@ -120,9 +116,20 @@ const styles = StyleSheet.create({
         width: 220
     },
     bottomContainer: {
-        marginTop: 30
+        marginTop: 10
     },
     uncategorizedInstructions: {
-        opacity: 0.6
+        opacity: 0.6,
+        marginTop: 4
+    },
+    category: {
+        marginTop: 22
+    },
+    recipe: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginTop: 7
     }
 })

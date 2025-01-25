@@ -80,13 +80,9 @@ export function RegisterScreen() {
                         <Input.HookForm label='Confirm Password' name='confirm_password' secureTextEntry />
                     </FormRow>
                     <View style={styles.buttonView}>
-                        <Button
-                            isLoading={isSubmitting}
-                            isDisabled={!isValid}
-                            color={semantic.colorBackgroundPrimary}
-                            title='Register'
-                            onPress={handleSubmit(onSubmit)}
-                        />
+                        <Button isLoading={isSubmitting} isDisabled={!isValid} onPress={handleSubmit(onSubmit)}>
+                            Register
+                        </Button>
                     </View>
                 </FormProvider>
             </View>

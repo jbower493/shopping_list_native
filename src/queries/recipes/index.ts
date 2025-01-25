@@ -1,5 +1,7 @@
 import {
-    useQuery
+    useMutation,
+    useQuery,
+    useQueryClient
     // useMutation
 } from '@tanstack/react-query'
 import {
@@ -13,6 +15,7 @@ import {
     // ConfirmImportedRecipePayload
 } from './types'
 import type {
+    MutationResponse,
     QueryResponse
     // MutationResponse
 } from '../utils/types'
@@ -60,14 +63,20 @@ export function useRecipesQuery() {
 //     })
 // }
 
-// /***** Delete recipe *****/
-// const deleteRecipe = (id: string): Promise<MutationResponse> => axios.delete(`/recipe/${id}`)
+/***** Delete recipe *****/
+export function useDeleteRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
-// export function useDeleteRecipeMutation() {
-//     return useMutation({
-//         mutationFn: deleteRecipe
-//     })
-// }
+    const deleteRecipe = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/recipe/${id}`)
+
+    return useMutation({
+        mutationFn: deleteRecipe,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+        }
+    })
+}
 
 // /***** Get single recipe *****/
 // const getSingleRecipe = (id: string): Promise<QueryResponse<{ recipe: DetailedRecipe }>> => axios.get(`/recipe/${id}`)

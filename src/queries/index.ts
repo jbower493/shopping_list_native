@@ -1,6 +1,6 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import { recipeCategoriesQueryKey, useRecipeCategoriesQuery } from './recipeCategories'
-import { recipesQueryKey, useRecipesQuery } from './recipes'
+import { recipesQueryKey, useDeleteRecipeMutation, useRecipesQuery } from './recipes'
 
 export const query = {
     auth: {
@@ -22,6 +22,11 @@ export const query = {
         all: {
             useQuery: useRecipesQuery,
             queryKey: recipesQueryKey
+        },
+        single: {
+            delete: {
+                useMutation: useDeleteRecipeMutation
+            }
         }
     },
     recipeCategories: {

@@ -13,6 +13,7 @@ function HeaderRightComponent(props: NativeStackHeaderRightProps) {
     const { mutate: logout } = query.auth.logout.useMutation()
 
     return (
+        // TODO: make this an icon, and move it somewhere proper
         <Button
             title='Logout'
             color={props.tintColor}

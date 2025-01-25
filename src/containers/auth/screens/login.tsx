@@ -10,6 +10,7 @@ import { FormRow } from '../../../components/Form/FormRow'
 import { useQueryClient } from '@tanstack/react-query'
 import { storeToken } from '../../../queries/utils/tokenStorage'
 import { useNavigation } from '@react-navigation/native'
+import { Link } from '../../../components/Link'
 
 type Inputs = {
     email: string
@@ -65,20 +66,13 @@ export function LoginScreen() {
                         <Input.HookForm label='Password' name='password' secureTextEntry />
                     </FormRow>
                     <View style={styles.buttonView}>
-                        <Button
-                            isLoading={isSubmitting}
-                            isDisabled={!isValid}
-                            color={semantic.colorBackgroundPrimary}
-                            title='Login'
-                            onPress={handleSubmit(onSubmit)}
-                        />
+                        <Button isLoading={isSubmitting} isDisabled={!isValid} color='primary' onPress={handleSubmit(onSubmit)}>
+                            Login
+                        </Button>
                     </View>
-                    <Pressable
-                        onPress={() => navigation.navigate('Register')}
-                        style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, marginTop: 20 })}
-                    >
+                    <Link style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
                         <Text>Register</Text>
-                    </Pressable>
+                    </Link>
                 </FormProvider>
             </View>
         </View>
@@ -105,5 +99,8 @@ const styles = StyleSheet.create({
     },
     buttonView: {
         marginTop: 10
+    },
+    registerLink: {
+        marginTop: 20
     }
 })
