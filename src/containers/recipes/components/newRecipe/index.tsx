@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import * as z from 'zod'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,7 +8,8 @@ import { FormRow } from '../../../../components/Form/FormRow'
 import { Button } from '../../../../components/Button'
 import { Modal } from '../../../../components/Modal'
 import { query } from '../../../../queries'
-import { Picker } from '../../../../components/Picker'
+import { Picker } from '../../../../components/Form/Picker'
+import { getRecipeCategoryOptions } from '../../../../utils/functions'
 
 type Inputs = {
     name: string
@@ -29,7 +30,7 @@ const schema = z.object({
 export function NewRecipe() {
     const [isOpen, setIsOpen] = useState(false)
 
-    const { data: recipeCategoriesdata, isFetching: isRecipeCategoriesFetching } = query.recipeCategories.all.useQuery()
+    const { data: recipeCategoriesData, isFetching: isRecipeCategoriesFetching } = query.recipeCategories.all.useQuery()
 
     const { mutateAsync: createRecipe } = query.recipes.create.useMutation()
 
@@ -47,8 +48,11 @@ export function NewRecipe() {
 
     const {
         handleSubmit,
-        formState: { isValid, isSubmitting }
+        formState: { isValid, isSubmitting },
+        watch
     } = methods
+
+    console.log(watch('recipeCategoryId'))
 
     const onSubmit: SubmitHandler<Inputs> = async ({ name, recipeCategoryId, instructions, prepTime, serves }) => {
         await createRecipe(
@@ -75,28 +79,16 @@ export function NewRecipe() {
             <Modal isOpen={isOpen} close={() => setIsOpen(false)} title='New Recipe'>
                 <View>
                     <FormProvider {...methods}>
-                        <Modal.Body>
+                        <Modal.Body isLoading={isRecipeCategoriesFetching}>
                             <View>
                                 <FormRow>
                                     <Input.HookForm label='Name' name='name' />
                                 </FormRow>
                                 <FormRow>
-                                    {/* <Select.HookForm
-                                label='Recipe Category'
-                                name='recipeCategoryId'
-                                options={getRecipeCategoryOptions(recipeCategoriesdata)}
-                            /> */}
-                                    <Picker
-                                        options={[
-                                            {
-                                                label: 'js',
-                                                value: 'js'
-                                            },
-                                            {
-                                                label: 'ts',
-                                                value: 'ts'
-                                            }
-                                        ]}
+                                    <Picker.HookForm
+                                        label='Category'
+                                        name='recipeCategoryId'
+                                        options={getRecipeCategoryOptions(recipeCategoriesData)}
                                     />
                                 </FormRow>
                                 <View style={styles.doubleFormRow}>
