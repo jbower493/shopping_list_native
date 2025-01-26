@@ -76,3 +76,18 @@ export const getExistingRecipeCategories = (recipesList: Recipe[]) => {
 
     return sorted
 }
+
+export function formatPrepTime(time: number | null) {
+    if (!time || !Number.isInteger(time)) {
+        return '?'
+    }
+
+    if (time < 60) {
+        return `${time} mins`
+    }
+
+    const mins = time % 60
+    const hrs = (time - mins) / 60
+
+    return `${hrs} ${hrs === 1 ? 'hr' : 'hrs'} ${mins} mins`
+}

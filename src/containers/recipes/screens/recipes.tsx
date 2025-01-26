@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { Button } from '../../../components/Button'
 import { Input } from '../../../components/Form/Input'
 import { query } from '../../../queries'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
@@ -9,8 +8,11 @@ import { CategoryTag } from '../../../components/CategoryTag'
 import { Link } from '../../../components/Link'
 import { DeleteRecipe } from '../components/deleteRecipe'
 import { NewRecipe } from '../components/newRecipe'
+import { useNavigation } from '@react-navigation/native'
 
 export function RecipesScreen() {
+    const navigation = useNavigation()
+
     const [search, setSearch] = useState('')
 
     const { data: getRecipesData, isFetching: isGetRecipesFetching, isError: isGetRecipesError } = query.recipes.all.useQuery()
@@ -63,12 +65,9 @@ export function RecipesScreen() {
                     <View>
                         {recipeslist.map((recipe) => (
                             <View style={styles.recipe} key={recipe.id}>
-                                <Link onPress={() => console.log('Navigate to edit recipe')}>
+                                <Link onPress={() => navigation.navigate('SingleRecipe')}>
                                     <Text>{recipe.name}</Text>
                                 </Link>
-                                {/* <Pressable onPress={() => console.log('Open delete modal')}>
-                                    <MaterialCommunityIcon name='delete' size={22} color={semantic.colorTextPrimary} />
-                                </Pressable> */}
                                 <DeleteRecipe recipeId={recipe.id} recipeName={recipe.name} />
                             </View>
                         ))}

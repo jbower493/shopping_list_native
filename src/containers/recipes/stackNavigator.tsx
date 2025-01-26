@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { semantic } from '../../designTokens'
 import { RecipesScreen } from './screens/recipes'
+import { SingleRecipeScreen } from './screens/singleRecipe'
 
 export const RecipesStackNavigator = createNativeStackNavigator({
     screenOptions: {
@@ -12,6 +13,13 @@ export const RecipesStackNavigator = createNativeStackNavigator({
             options: {
                 headerShown: true,
                 title: 'Recipes'
+            }
+        },
+        SingleRecipe: {
+            screen: SingleRecipeScreen,
+            options: {
+                headerShown: true,
+                title: 'Single Recipe'
             }
         }
     }
