@@ -48,11 +48,8 @@ export function NewRecipe() {
 
     const {
         handleSubmit,
-        formState: { isValid, isSubmitting },
-        watch
+        formState: { isValid, isSubmitting }
     } = methods
-
-    console.log(watch('recipeCategoryId'))
 
     const onSubmit: SubmitHandler<Inputs> = async ({ name, recipeCategoryId, instructions, prepTime, serves }) => {
         await createRecipe(

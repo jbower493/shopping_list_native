@@ -5,17 +5,21 @@ import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
 import { EditRecipeForm } from '../components/editRecipeForm'
-import { Menu } from '../../../components/Menu'
 import { MoreOptions } from '../components/moreOptions'
-
-// TODO: get actual id from somewhere
-const recipeId = '1'
+import { CategoryTag } from '../../../components/CategoryTag'
+import { formatPrepTime } from '../../../utils/functions'
+import { RouteProp, useRoute } from '@react-navigation/native'
+import { RecipesStackParamsList } from '../stackNavigator'
+import { Link } from '../../../components/Link'
 
 export function SingleRecipeScreen() {
     const [isEditRecipeFormOpen, setIsEditRecipeFormOpen] = useState(false)
     const [isInstructionsShowing, setIsInstructionsShowing] = useState<boolean>(true)
 
-    const { data: getRecipeCategoriesData } = query.recipeCategories.all.useQuery()
+    const route = useRoute<RouteProp<RecipesStackParamsList, 'SingleRecipe'>>()
+    const { recipeId } = route.params
+
+    const { data: recipeCategoriesData } = query.recipeCategories.all.useQuery()
     const { data: singleRecipeData, isPending: isSingleRecipeLoading, isError: isSingleRecipeError } = query.recipes.single.useQuery(recipeId || '')
     // const { data: itemsData, isPending: isItemsLoading, isError: isItemsError } = useItemsQuery()
 
@@ -71,67 +75,48 @@ export function SingleRecipeScreen() {
                         <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
                     </Pressable>
                 </View>
-                {/* <Dropdown
-                    dropdownClassName='h-8 w-8'
-                    menuButtonClassName='!bg-primary !text-white w-full h-full flex justify-center items-center rounded-full'
-                    menuButton={<EllipsisHorizontalIcon className='size-6' style={{ transform: 'scale(400%)' }} />}
-                    menuItems={[
-                        <Dropdown.MenuItem.Button key='1' onClick={() => navigate(`/recipes/edit/${id}/duplicate`)}>
-                            <Square2StackIcon className='w-4 text-primary' />
-                            Duplicate
-                        </Dropdown.MenuItem.Button>,
-                        <Dropdown.MenuItem.Button key='2' onClick={() => navigate(`/recipes/edit/${id}/share`)}>
-                            <ArrowUpTrayIcon className='w-4 text-primary' />
-                            Share
-                        </Dropdown.MenuItem.Button>
-                    ]}
-                /> */}
                 <MoreOptions />
             </View>
-            {/* <div className='mt-2'>
-                <div className='flex gap-4 items-center mt-3'>
-                    <CategoryTag
-                        key={id}
-                        categoriesData={getRecipeCategoriesData || []}
-                        categoryName={recipe_category?.name || 'Uncategorized'}
-                        size='sm'
-                    />
-                    <div className='flex gap-1 items-center'>
-                        <ClockIcon className='w-5 text-primary' />
-                        <p className='text-secondary-500 text-sm'>{formatPrepTime(prep_time)}</p>
-                    </div>
-                    <div className='flex gap-1 items-center'>
-                        <UsersIcon className='w-5 text-primary' />
-                        <p className='text-secondary-500 text-sm'>{serves || '?'}</p>
-                    </div>
-                </div>
-            </div>
+            <View style={styles.recipeMeta}>
+                <CategoryTag categoriesData={recipeCategoriesData || []} categoryName={recipe_category?.name || 'Uncategorized'} />
+                <View style={styles.recipeMetaItem}>
+                    <MaterialCommunityIcon name='timer-outline' size={22} color={semantic.colorTextPrimary} />
+
+                    <Text>{formatPrepTime(prep_time)}</Text>
+                </View>
+                <View style={styles.recipeMetaItem}>
+                    <MaterialCommunityIcon name='account-multiple' size={22} color={semantic.colorTextPrimary} />
+
+                    <Text>{serves || '?'}</Text>
+                </View>
+            </View>
             {image_url ? (
-                <div className='relative mt-4 h-44 max-w-[450px]'>
-                    <img className='h-full w-full object-cover rounded-md' src={image_url || ''} alt={name} />
-                    <Dropdown
-                        dropdownClassName='!absolute top-3 right-3 h-8 w-8'
-                        menuButtonClassName='bg-white w-full h-full flex justify-center items-center rounded-full'
-                        menuButton={<EllipsisHorizontalIcon className='size-6' style={{ transform: 'scale(400%)' }} />}
-                        menuItems={[
-                            <Dropdown.MenuItem.Link key='1' to={`/recipes/edit/${id}/upload-image`}>
-                                <CloudArrowUpIcon className='size-4 text-primary' />
-                                Upload new
-                            </Dropdown.MenuItem.Link>,
-                            <Dropdown.MenuItem.Link key='2' to={`/recipes/edit/${id}/remove-image`}>
-                                <TrashIcon className='size-4 text-primary' />
-                                Remove
-                            </Dropdown.MenuItem.Link>
-                        ]}
-                    />
-                </div>
+                // <div className='relative mt-4 h-44 max-w-[450px]'>
+                //     <img className='h-full w-full object-cover rounded-md' src={image_url || ''} alt={name} />
+                //     <Dropdown
+                //         dropdownClassName='!absolute top-3 right-3 h-8 w-8'
+                //         menuButtonClassName='bg-white w-full h-full flex justify-center items-center rounded-full'
+                //         menuButton={<EllipsisHorizontalIcon className='size-6' style={{ transform: 'scale(400%)' }} />}
+                //         menuItems={[
+                //             <Dropdown.MenuItem.Link key='1' to={`/recipes/edit/${id}/upload-image`}>
+                //                 <CloudArrowUpIcon className='size-4 text-primary' />
+                //                 Upload new
+                //             </Dropdown.MenuItem.Link>,
+                //             <Dropdown.MenuItem.Link key='2' to={`/recipes/edit/${id}/remove-image`}>
+                //                 <TrashIcon className='size-4 text-primary' />
+                //                 Remove
+                //             </Dropdown.MenuItem.Link>
+                //         ]}
+                //     />
+                // </div>
+                <Text>Have image</Text>
             ) : (
-                <div className='mt-2'>
-                    <Link to={`/recipes/edit/${id}/upload-image`}>Upload Image</Link>
-                </div>
+                <Link style={styles.uploadImageLink} onPress={() => {}}>
+                    Upload Image
+                </Link>
             )}
 
-            <div className='mt-4'>
+            {/*<div className='mt-4'>
                 <div className='flex items-center mb-2'>
                     <h3>Instructions</h3>
                     <button
@@ -161,7 +146,7 @@ export function SingleRecipeScreen() {
             />
             <div className='mt-4'>{renderCurrentItems()}</div> */}
 
-            <EditRecipeForm recipeId={recipeId} isOpen={isEditRecipeFormOpen} setIsOpen={setIsEditRecipeFormOpen} />
+            <EditRecipeForm recipeId={recipeId.toString()} isOpen={isEditRecipeFormOpen} setIsOpen={setIsEditRecipeFormOpen} />
         </View>
     )
 }
@@ -190,5 +175,19 @@ const styles = StyleSheet.create({
     },
     titleEditButton: {
         marginTop: 3
+    },
+    recipeMeta: {
+        marginTop: 15,
+        flexDirection: 'row',
+        gap: 15,
+        alignItems: 'center'
+    },
+    recipeMetaItem: {
+        flexDirection: 'row',
+        gap: 5,
+        alignItems: 'center'
+    },
+    uploadImageLink: {
+        marginTop: 10
     }
 })

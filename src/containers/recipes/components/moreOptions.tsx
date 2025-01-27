@@ -3,35 +3,42 @@ import { Menu } from '../../../components/Menu'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
 
-// TODO: need to find the lists of all available icon names on ios and android. This post has some stuff about it: https://stackoverflow.com/questions/47181993/list-of-available-icons
-
 export function MoreOptions() {
     return (
         <Menu
             title='Uncle Bob'
-            onSelect={() => {}}
+            onSelect={(selectedAction) => {
+                switch (selectedAction) {
+                    case 'duplicate':
+                        // TODO: do something
+                        break
+                    case 'share':
+                        // TODO: do something
+                        break
+                    default:
+                        break
+                }
+            }}
             actions={[
                 {
                     id: 'duplicate',
                     title: 'Duplicate',
-                    titleColor: '#2367A2',
-                    // image: Platform.select({
-                    //     ios: 'doc.on.doc',
-                    //     android: 'content_copy'
-                    // }),
-                    image: 'ic_menu_share',
-                    imageColor: '#2367A2'
+                    titleColor: semantic.colorTextDefault,
+                    image: Platform.select({
+                        ios: 'doc.on.doc',
+                        android: 'ic_menu_set_as'
+                    }),
+                    imageColor: semantic.colorTextPrimary
                 },
                 {
                     id: 'share',
-                    title: 'Share Action',
-                    titleColor: '#46F289',
-                    subtitle: 'Share action on SNS',
+                    title: 'Share',
+                    titleColor: semantic.colorTextDefault,
                     image: Platform.select({
                         ios: 'square.and.arrow.up',
                         android: 'ic_menu_share'
                     }),
-                    imageColor: '#46F289'
+                    imageColor: semantic.colorTextPrimary
                 }
             ]}
         >

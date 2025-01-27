@@ -3,7 +3,12 @@ import { semantic } from '../../designTokens'
 import { RecipesScreen } from './screens/recipes'
 import { SingleRecipeScreen } from './screens/singleRecipe'
 
-export const RecipesStackNavigator = createNativeStackNavigator({
+export type RecipesStackParamsList = {
+    RecipesHome: undefined
+    SingleRecipe: { recipeId: number }
+}
+
+export const RecipesStackNavigator = createNativeStackNavigator<RecipesStackParamsList>({
     screenOptions: {
         headerTintColor: semantic.colorTextPrimary
     },

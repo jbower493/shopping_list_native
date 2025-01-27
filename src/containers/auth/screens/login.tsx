@@ -71,7 +71,7 @@ export function LoginScreen() {
                         </Button>
                     </View>
                     <Link style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
-                        <Text>Register</Text>
+                        Register
                     </Link>
                 </FormProvider>
             </View>

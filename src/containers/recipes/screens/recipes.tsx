@@ -65,7 +65,7 @@ export function RecipesScreen() {
                     <View>
                         {recipeslist.map((recipe) => (
                             <View style={styles.recipe} key={recipe.id}>
-                                <Link onPress={() => navigation.navigate('SingleRecipe')}>
+                                <Link onPress={() => navigation.navigate('SingleRecipe', { recipeId: recipe.id })}>
                                     <Text>{recipe.name}</Text>
                                 </Link>
                                 <DeleteRecipe recipeId={recipe.id} recipeName={recipe.name} />

@@ -7,6 +7,10 @@ type MenuProps = {
     children: React.JSX.Element
 }
 
+// Action system image lists
+// Android: https://developer.android.com/reference/android/R.drawable
+// IOS: https://developer.apple.com/sf-symbols/
+
 export function Menu({ title, actions, onSelect, children }: MenuProps) {
     return (
         <MenuView
