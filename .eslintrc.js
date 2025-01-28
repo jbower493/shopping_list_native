@@ -9,6 +9,7 @@ module.exports = {
         'react/react-in-jsx-scope': ['off'],
         'comma-dangle': 'off',
         'jsx-quotes': 'off',
-        'react-native/no-inline-styles': 'off'
+        'react-native/no-inline-styles': 'off',
+        'handle-callback-err': 'off'
     }
 }

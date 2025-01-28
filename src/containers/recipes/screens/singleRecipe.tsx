@@ -11,6 +11,9 @@ import { formatPrepTime } from '../../../utils/functions'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { RecipesStackParamsList } from '../stackNavigator'
 import { Link } from '../../../components/Link'
+import { EditRecipeItem } from '../components/editRecipeItem'
+import { AddItem } from '../components/addItem'
+import { AddItemToRecipePayload } from '../../../queries/recipes/types'
 
 export function SingleRecipeScreen() {
     const [isEditRecipeFormOpen, setIsEditRecipeFormOpen] = useState(false)
@@ -21,9 +24,9 @@ export function SingleRecipeScreen() {
 
     const { data: recipeCategoriesData } = query.recipeCategories.all.useQuery()
     const { data: singleRecipeData, isPending: isSingleRecipeLoading, isError: isSingleRecipeError } = query.recipes.single.useQuery(recipeId || '')
-    // const { data: itemsData, isPending: isItemsLoading, isError: isItemsError } = useItemsQuery()
+    const { data: itemsData, isPending: isItemsLoading, isError: isItemsError } = useItemsQuery()
 
-    // const { mutate: addItemToRecipe } = useAddItemToRecipeMutation()
+    const { mutate: addItemToRecipe } = useAddItemToRecipeMutation()
 
     if (isSingleRecipeLoading /* || isItemsLoading*/) {
         return <FullScreenLoader />
@@ -39,32 +42,28 @@ export function SingleRecipeScreen() {
 
     const { name, id, items, instructions, recipe_category, image_url, prep_time, serves } = singleRecipeData
 
-    // const renderInstructions = () => {
-    //     if (!isInstructionsShowing) {
-    //         return ''
-    //     }
+    const renderInstructions = () => {
+        if (!isInstructionsShowing) {
+            return null
+        }
 
-    //     return (
-    //         <pre className='text-secondary-500 whitespace-pre-wrap' style={{ fontFamily: 'inherit' }}>
-    //             {instructions || 'None set. Click the edit icon above to add some instructions.'}
-    //         </pre>
-    //     )
-    // }
+        return <Text style={styles.instructionsText}>{instructions || 'None set. Click the edit icon above to add some instructions.'}</Text>
+    }
 
-    // const renderCurrentItems = () => {
-    //     return (
-    //         <>
-    //             <h3>Items</h3>
-    //             <ul className='mt-2 overflow-hidden pb-40'>
-    //                 {[...items]
-    //                     .sort((a, b) => (a.name > b.name ? 1 : -1))
-    //                     .map((item, index) => (
-    //                         <EditRecipeItem key={index} item={item} recipeId={id} />
-    //                     ))}
-    //             </ul>
-    //         </>
-    //     )
-    // }
+    const renderCurrentItems = () => {
+        return (
+            <View style={styles.currentItems}>
+                <Text style={styles.currentItemsTitle}>Items</Text>
+                <View>
+                    {[...items]
+                        .sort((a, b) => (a.name > b.name ? 1 : -1))
+                        .map((item) => (
+                            <EditRecipeItem key={item.id} item={item} recipeId={id} />
+                        ))}
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View style={styles.main}>
@@ -90,6 +89,7 @@ export function SingleRecipeScreen() {
                     <Text>{serves || '?'}</Text>
                 </View>
             </View>
+            {/* TODO: do this once everything else is finished, as I need to get minio working locally again. */}
             {image_url ? (
                 // <div className='relative mt-4 h-44 max-w-[450px]'>
                 //     <img className='h-full w-full object-cover rounded-md' src={image_url || ''} alt={name} />
@@ -116,22 +116,17 @@ export function SingleRecipeScreen() {
                 </Link>
             )}
 
-            {/*<div className='mt-4'>
-                <div className='flex items-center mb-2'>
-                    <h3>Instructions</h3>
-                    <button
-                        type='button'
-                        onClick={() => setIsInstructionsShowing((prev) => !prev)}
-                        className='ml-4 text-sky-500 hover:text-sky-600 hover:underline'
-                    >
-                        {isInstructionsShowing ? 'Hide' : 'Show'}
-                    </button>
-                    <button className='ml-4' type='button' onClick={() => navigate(`/recipes/edit/${id}/details`)}>
-                        <PencilSquareIcon className='w-5 text-primary hover:text-primary-hover' />
-                    </button>
-                </div>
+            <View style={styles.instructions}>
+                <View style={styles.instructionsTitleContainer}>
+                    <Text style={styles.instructionsTitle}>Instructions</Text>
+                    <Link onPress={() => setIsInstructionsShowing((prev) => !prev)}>{isInstructionsShowing ? 'Hide' : 'Show'}</Link>
+                    <Pressable style={styles.titleEditButton} onPress={() => setIsEditRecipeFormOpen(true)}>
+                        <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
+                    </Pressable>
+                </View>
                 {renderInstructions()}
-            </div>
+            </View>
+
             <AddItem
                 className='mt-6'
                 onAdd={(itemToAdd, categoryId, quantity, quantityUnitId) => {
@@ -144,7 +139,8 @@ export function SingleRecipeScreen() {
                 }}
                 itemsList={getItemsData}
             />
-            <div className='mt-4'>{renderCurrentItems()}</div> */}
+
+            {renderCurrentItems()}
 
             <EditRecipeForm recipeId={recipeId.toString()} isOpen={isEditRecipeFormOpen} setIsOpen={setIsEditRecipeFormOpen} />
         </View>
@@ -189,5 +185,33 @@ const styles = StyleSheet.create({
     },
     uploadImageLink: {
         marginTop: 10
+    },
+    instructions: {
+        marginTop: 16
+    },
+    instructionsTitleContainer: {
+        flexDirection: 'row',
+        gap: 10,
+        alignItems: 'center'
+    },
+    instructionsTitle: {
+        fontSize: 18,
+        fontWeight: 600
+    },
+    instructionsText: {
+        marginTop: 5
+    },
+    addItemContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 2
+    },
+    currentItems: {
+        marginTop: 15
+    },
+    currentItemsTitle: {
+        fontSize: 18,
+        fontWeight: 600,
+        marginBottom: 6
     }
 })
