@@ -18,6 +18,7 @@ type InputFieldProps = {
     placeholder?: string
     onChangeText?: (text: string) => void
     value?: string
+    onFocus?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void
     onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void
     inputMode?: InputModeOptions
     keyboardType?: KeyboardTypeOptions
@@ -25,6 +26,7 @@ type InputFieldProps = {
     containerStyle?: StyleProp<ViewStyle>
     isTextArea?: boolean
     style?: StyleProp<ViewStyle>
+    inputRef?: React.LegacyRef<TextInput>
 }
 
 type TInputField = React.FC<InputFieldProps>
@@ -34,22 +36,26 @@ export const InputComponent: TInputField = ({
     placeholder,
     onChangeText,
     value,
+    onFocus,
     onBlur,
     inputMode,
     keyboardType,
     secureTextEntry,
     containerStyle,
     isTextArea,
-    style
+    style,
+    inputRef
 }) => {
     return (
         <View style={[containerStyle, style]}>
             {label ? <Text style={styles.label}>{label}</Text> : null}
             <TextInput
+                ref={inputRef}
                 style={[styles.input, isTextArea ? styles.textArea : null]}
                 onChangeText={onChangeText}
                 value={value}
                 placeholder={placeholder}
+                onFocus={onFocus}
                 onBlur={onBlur}
                 inputMode={inputMode}
                 keyboardType={keyboardType}

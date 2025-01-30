@@ -23,16 +23,20 @@ export function SingleRecipeScreen() {
     const { recipeId } = route.params
 
     const { data: recipeCategoriesData } = query.recipeCategories.all.useQuery()
-    const { data: singleRecipeData, isPending: isSingleRecipeLoading, isError: isSingleRecipeError } = query.recipes.single.useQuery(recipeId || '')
-    const { data: itemsData, isPending: isItemsLoading, isError: isItemsError } = useItemsQuery()
+    const {
+        data: singleRecipeData,
+        isPending: isSingleRecipeLoading,
+        isError: isSingleRecipeError
+    } = query.recipes.single.useQuery(recipeId.toString() || '')
+    const { data: itemsData, isPending: isItemsLoading, isError: isItemsError } = query.items.all.useQuery()
 
-    const { mutate: addItemToRecipe } = useAddItemToRecipeMutation()
+    const { mutate: addItemToRecipe } = query.recipes.single.addItem.useMutation()
 
-    if (isSingleRecipeLoading /* || isItemsLoading*/) {
+    if (isSingleRecipeLoading || isItemsLoading) {
         return <FullScreenLoader />
     }
 
-    if (isSingleRecipeError || !singleRecipeData /* || isItemsError || !itemsData*/) {
+    if (isSingleRecipeError || !singleRecipeData || isItemsError || !itemsData) {
         return (
             <View>
                 <Text>Recipe error</Text>
@@ -128,16 +132,19 @@ export function SingleRecipeScreen() {
             </View>
 
             <AddItem
-                className='mt-6'
                 onAdd={(itemToAdd, categoryId, quantity, quantityUnitId) => {
                     const payload: AddItemToRecipePayload = { recipeId: id.toString(), itemName: itemToAdd, quantity }
 
-                    if (categoryId && categoryId !== 'none') payload.categoryId = categoryId
-                    if (quantityUnitId) payload.quantityUnitId = quantityUnitId
+                    if (categoryId && categoryId !== 'none') {
+                        payload.categoryId = categoryId
+                    }
+                    if (quantityUnitId) {
+                        payload.quantityUnitId = quantityUnitId
+                    }
 
                     addItemToRecipe(payload)
                 }}
-                itemsList={getItemsData}
+                itemsList={itemsData || []}
             />
 
             {renderCurrentItems()}

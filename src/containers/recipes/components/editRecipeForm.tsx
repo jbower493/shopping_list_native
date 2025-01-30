@@ -22,7 +22,6 @@ export function EditRecipeForm({ recipeId, isOpen, setIsOpen }: EditRecipeFormPr
                             Back
                         </Button>
                         <Button
-                            color='error'
                             onPress={() => {
                                 // TODO
                             }}

@@ -10,6 +10,7 @@ module.exports = {
         'comma-dangle': 'off',
         'jsx-quotes': 'off',
         'react-native/no-inline-styles': 'off',
-        'handle-callback-err': 'off'
+        'handle-callback-err': 'off',
+        'react-hooks/exhaustive-deps': 'off'
     }
 }

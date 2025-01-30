@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Credentials, RegisterCredentials, User, UserDataAdditionalUser } from './types'
+import { Credentials, RegisterCredentials, RequestPasswordResetPayload, ResetPasswordPayload, User, UserDataAdditionalUser } from './types'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
 import { MutationResponse, QueryResponse } from '../utils/types'
@@ -60,20 +60,25 @@ export function useLogoutMutation() {
     })
 }
 
-// /***** Request password reset *****/
-// const requestPaswordReset = (payload: RequestPasswordResetPayload): Promise<MutationResponse> => axios.post('/forgot-password', payload)
+/***** Request password reset *****/
+export function useRequestPasswordResetMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// export function useRequestPasswordResetMutation() {
-//     return useMutation({
-//         mutationFn: requestPaswordReset
-//     })
-// }
+    const requestPaswordReset = (payload: RequestPasswordResetPayload): Promise<MutationResponse> =>
+        axiosInstance.post('/api/forgot-password', payload)
 
-// /***** Reset password *****/
-// const resetPassword = (payload: ResetPasswordPayload): Promise<MutationResponse> => axios.post('/reset-password', payload)
+    return useMutation({
+        mutationFn: requestPaswordReset
+    })
+}
 
-// export function useResetPasswordMutation() {
-//     return useMutation({
-//         mutationFn: resetPassword
-//     })
-// }
+/***** Reset password *****/
+export function useResetPasswordMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+
+    const resetPassword = (payload: ResetPasswordPayload): Promise<MutationResponse> => axiosInstance.post('/api/reset-password', payload)
+
+    return useMutation({
+        mutationFn: resetPassword
+    })
+}

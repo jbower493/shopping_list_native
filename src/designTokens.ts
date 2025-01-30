@@ -24,6 +24,7 @@ export const semantic = {
     colorBackgroundPrimary: primitive.colorPrimary,
     colorBackgroundSecondary: primitive.colorGray200,
     colorBackgroundError: primitive.colorRed,
+    colorBackgroundInfo: primitive.colorSky,
     colorBorderPrimary: primitive.colorPrimary,
     colorBorderDefault: primitive.colorGray,
 

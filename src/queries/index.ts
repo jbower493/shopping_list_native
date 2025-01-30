@@ -1,8 +1,11 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
+import { categoriesQueryKey, useGetCategoriesQuery } from './categories'
+import { itemsQueryKey, useGetItemsQuery } from './items'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import { recipeCategoriesQueryKey, useRecipeCategoriesQuery } from './recipeCategories'
 import {
     recipesQueryKey,
+    useAddItemToRecipeMutation,
     useCreateRecipeMutation,
     useDeleteRecipeMutation,
     useRecipesQuery,
@@ -38,6 +41,9 @@ export const query = {
             },
             removeItem: {
                 useMutation: useRemoveItemFromRecipeMutation
+            },
+            addItem: {
+                useMutation: useAddItemToRecipeMutation
             }
         },
         create: {
@@ -54,6 +60,18 @@ export const query = {
         all: {
             useQuery: useQuantityUnitsQuery,
             queryKey: quantityUnitsQueryKey
+        }
+    },
+    items: {
+        all: {
+            useQuery: useGetItemsQuery,
+            queryKey: itemsQueryKey
+        }
+    },
+    itemCategories: {
+        all: {
+            useQuery: useGetCategoriesQuery,
+            queryKey: categoriesQueryKey
         }
     }
 }

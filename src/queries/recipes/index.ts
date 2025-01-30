@@ -1,45 +1,28 @@
-import {
-    QueryClient,
-    useMutation,
-    useQuery,
-    useQueryClient
-    // useMutation
-} from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
     AddItemToRecipePayload,
+    ConfirmImportedRecipePayload,
     DetailedRecipe,
+    EditRecipePayload,
     NewRecipe,
     Recipe,
-    RecipeItem
-    // NewRecipe,
-    // DetailedRecipe,
-    // AddItemToRecipePayload,
-    // EditRecipePayload,
-    // RecipeItem,
-    // UpdateRecipeItemQuantityPayload,
-    // ConfirmImportedRecipePayload
+    RecipeItem,
+    UpdateRecipeItemQuantityPayload
 } from './types'
-import type {
-    MutationResponse,
-    QueryResponse
-    // MutationResponse
-} from '../utils/types'
+import type { MutationResponse, QueryResponse } from '../utils/types'
 import { QueryKeySet } from '../utils/keyFactory'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
 import { AxiosInstance } from 'axios'
 import { getQuantityUnits, quantityUnitsQueryKey } from '../quantityUnits'
 import { categoriesQueryKey, getCategories } from '../categories'
-// import { fireErrorNotification, queryClient } from '../utils/queryClient'
-// import { categoriesQueryKey, getCategories } from 'containers/categories/queries'
-// import { getItems, itemsQueryKey } from 'containers/items/queries'
-// import { getQuantityUnits, quantityUnitsQueryKey } from 'containers/quantityUnits/queries'
-// import { QuantityUnit } from 'containers/quantityUnits/types'
+import { getItems, itemsQueryKey } from '../items'
+import { QuantityUnit } from '../quantityUnits/types'
 
 const recipesKeySet = new QueryKeySet('Recipe')
 
 /***** Get recipes *****/
-// export type GetRecipesReturnType = ReturnType<typeof getRecipes>
+export type GetRecipesReturnType = ReturnType<typeof getRecipes>
 export const recipesQueryKey = recipesKeySet.many
 
 const getRecipes = (axiosInstance: AxiosInstance): Promise<QueryResponse<{ recipes: Recipe[] }>> => axiosInstance.get('/api/recipe')
@@ -285,179 +268,201 @@ export function useRemoveItemFromRecipeMutation() {
     })
 }
 
-// /***** Edit recipe *****/
-// const editRecipe = ({ recipeId, attributes }: { recipeId: string; attributes: EditRecipePayload }): Promise<MutationResponse> =>
-//     axios.put(`/recipe/${recipeId}`, attributes)
+/***** Edit recipe *****/
+export function useEditRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// export function useEditRecipeMutation() {
-//     return useMutation({
-//         mutationFn: editRecipe
-//     })
-// }
+    const editRecipe = ({ recipeId, attributes }: { recipeId: string; attributes: EditRecipePayload }): Promise<MutationResponse> =>
+        axiosInstance.put(`/api/recipe/${recipeId}`, attributes)
 
-// /***** Duplicate recipe *****/
-// const duplicateRecipe = ({
-//     recipeId,
-//     attributes
-// }: {
-//     recipeId: string
-//     attributes: { name: string }
-// }): Promise<MutationResponse<{ new_recipe_id: number }>> => axios.post(`/recipe/${recipeId}/duplicate`, attributes)
+    return useMutation({
+        mutationFn: editRecipe
+    })
+}
 
-// export function useDuplicateRecipeMutation() {
-//     return useMutation({
-//         mutationFn: duplicateRecipe
-//     })
-// }
+/***** Duplicate recipe *****/
+export function useDuplicateRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// /***** Update item quantity *****/
-// const updateRecipeItemQuantity = ({
-//     recipeId,
-//     attributes
-// }: {
-//     recipeId: string
-//     attributes: UpdateRecipeItemQuantityPayload
-// }): Promise<MutationResponse> => axios.put(`/recipe/${recipeId}/update-item-quantity`, attributes)
+    const duplicateRecipe = ({
+        recipeId,
+        attributes
+    }: {
+        recipeId: string
+        attributes: { name: string }
+    }): Promise<MutationResponse<{ new_recipe_id: number }>> => axiosInstance.post(`/api/recipe/${recipeId}/duplicate`, attributes)
 
-// export function useUpdateRecipeItemQuantityMutation() {
-//     return useMutation({
-//         mutationFn: updateRecipeItemQuantity,
-//         onSuccess(data, variables) {
-//             queryClient.setQueryData(
-//                 singleRecipeQueryKey(variables.recipeId || ''),
-//                 (old: Awaited<ReturnType<typeof getSingleRecipe>> | undefined) => {
-//                     if (!old) return undefined
+    return useMutation({
+        mutationFn: duplicateRecipe
+    })
+}
 
-//                     function getNewQuantityUnit() {
-//                         const sentQuanityUnitId = variables.attributes.quantity_unit_id
+/***** Update item quantity *****/
+export function useUpdateRecipeItemQuantityMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
-//                         if (!variables.attributes.quantity_unit_id) {
-//                             return null
-//                         }
+    const updateRecipeItemQuantity = ({
+        recipeId,
+        attributes
+    }: {
+        recipeId: string
+        attributes: UpdateRecipeItemQuantityPayload
+    }): Promise<MutationResponse> => axiosInstance.put(`/api/recipe/${recipeId}/update-item-quantity`, attributes)
 
-//                         type QuantityUnitsData = Awaited<ReturnType<typeof getQuantityUnits>> | undefined
-//                         const quantityUnitsQueryData: QuantityUnitsData = queryClient.getQueryData(quantityUnitsQueryKey())
+    return useMutation({
+        mutationFn: updateRecipeItemQuantity,
+        onSuccess(data, variables) {
+            queryClient.setQueryData(
+                singleRecipeQueryKey(variables.recipeId || ''),
+                (old: Awaited<ReturnType<typeof getSingleRecipe>> | undefined) => {
+                    if (!old) {
+                        return undefined
+                    }
 
-//                         const foundUnit = quantityUnitsQueryData?.data.quantity_units.find((unit) => unit.id === sentQuanityUnitId)
+                    function getNewQuantityUnit() {
+                        const sentQuanityUnitId = variables.attributes.quantity_unit_id
 
-//                         if (!foundUnit?.name || !foundUnit?.symbol) {
-//                             return null
-//                         }
+                        if (!variables.attributes.quantity_unit_id) {
+                            return null
+                        }
 
-//                         const newUnit = {
-//                             id: sentQuanityUnitId,
-//                             name: foundUnit?.name,
-//                             symbol: foundUnit?.symbol
-//                         } as QuantityUnit
+                        type QuantityUnitsData = Awaited<ReturnType<typeof getQuantityUnits>> | undefined
+                        const quantityUnitsQueryData: QuantityUnitsData = queryClient.getQueryData(quantityUnitsQueryKey())
 
-//                         return newUnit
-//                     }
+                        const foundUnit = quantityUnitsQueryData?.data.quantity_units.find((unit) => unit.id === sentQuanityUnitId)
 
-//                     const newData = {
-//                         ...old,
-//                         data: {
-//                             recipe: {
-//                                 ...old.data.recipe,
-//                                 items: old.data.recipe.items.map((item) => {
-//                                     if (item.id !== Number(variables.attributes.item_id)) {
-//                                         return item
-//                                     }
+                        if (!foundUnit?.name || !foundUnit?.symbol) {
+                            return null
+                        }
 
-//                                     return {
-//                                         ...item,
-//                                         item_quantity: {
-//                                             quantity: Number(variables.attributes.quantity),
-//                                             quantity_unit: getNewQuantityUnit()
-//                                         }
-//                                     }
-//                                 })
-//                             }
-//                         }
-//                     }
+                        const newUnit = {
+                            id: sentQuanityUnitId,
+                            name: foundUnit?.name,
+                            symbol: foundUnit?.symbol
+                        } as QuantityUnit
 
-//                     return newData
-//                 }
-//             )
+                        return newUnit
+                    }
 
-//             queryClient.invalidateQueries(singleRecipeQueryKey(variables.recipeId || ''))
-//         }
-//     })
-// }
+                    const newData = {
+                        ...old,
+                        data: {
+                            recipe: {
+                                ...old.data.recipe,
+                                items: old.data.recipe.items.map((item) => {
+                                    if (item.id !== Number(variables.attributes.item_id)) {
+                                        return item
+                                    }
 
-// /***** Accept shared recipe *****/
-// const createShareRecipeRequest = ({ recipeId, email }: { recipeId: number; email: string }): Promise<MutationResponse> =>
-//     axios.post(`/recipe/${recipeId}/create-share-request`, { email })
+                                    return {
+                                        ...item,
+                                        item_quantity: {
+                                            quantity: Number(variables.attributes.quantity),
+                                            quantity_unit: getNewQuantityUnit()
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }
 
-// export function useCreateShareRecipeRequestMutation() {
-//     return useMutation({
-//         mutationFn: createShareRecipeRequest
-//     })
-// }
+                    return newData
+                }
+            )
 
-// /***** Accept shared recipe *****/
-// const acceptSharedRecipe = ({
-//     newRecipeName,
-//     shareRequestId
-// }: {
-//     newRecipeName: string
-//     shareRequestId: number
-// }): Promise<MutationResponse<{ new_recipe_id: number }>> => axios.post(`/recipe/accept-share-request/${shareRequestId}`, { name: newRecipeName })
+            queryClient.invalidateQueries({ queryKey: singleRecipeQueryKey(variables.recipeId || '') })
+        }
+    })
+}
 
-// export function useAcceptSharedRecipeMutation() {
-//     return useMutation({
-//         mutationFn: acceptSharedRecipe
-//     })
-// }
+/***** Accept shared recipe *****/
+export function useCreateShareRecipeRequestMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// /***** Upload recipe image *****/
-// const uploadRecipeImage = ({ id, formData }: { id: string; formData: FormData }): Promise<MutationResponse> =>
-//     axios.post(`/recipe/${id}/upload-image`, formData, {
-//         headers: {
-//             'Content-Type': 'multipart/form-data'
-//         }
-//     })
+    const createShareRecipeRequest = ({ recipeId, email }: { recipeId: number; email: string }): Promise<MutationResponse> =>
+        axiosInstance.post(`/api/recipe/${recipeId}/create-share-request`, { email })
 
-// export function useUploadRecipeImageMutation() {
-//     return useMutation({
-//         mutationFn: uploadRecipeImage
-//     })
-// }
+    return useMutation({
+        mutationFn: createShareRecipeRequest
+    })
+}
 
-// /***** Remove recipe image *****/
-// const removeRecipeImage = (id: string): Promise<MutationResponse> => axios.delete(`/recipe/${id}/remove-image`)
+/***** Accept shared recipe *****/
+export function useAcceptSharedRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// export function useRemoveRecipeImageMutation() {
-//     return useMutation({
-//         mutationFn: removeRecipeImage
-//     })
-// }
+    const acceptSharedRecipe = ({
+        newRecipeName,
+        shareRequestId
+    }: {
+        newRecipeName: string
+        shareRequestId: number
+    }): Promise<MutationResponse<{ new_recipe_id: number }>> =>
+        axiosInstance.post(`/api/recipe/accept-share-request/${shareRequestId}`, { name: newRecipeName })
 
-// /***** Import recipe from image *****/
-// const importRecipeFromImage = (formData: FormData): Promise<MutationResponse<{ imported_recipe: string[] }>> =>
-//     axios.post('/recipe/import-from-image', formData, {
-//         headers: {
-//             'Content-Type': 'multipart/form-data'
-//         }
-//     })
+    return useMutation({
+        mutationFn: acceptSharedRecipe
+    })
+}
 
-// export function useImportRecipeFromImageMutation() {
-//     return useMutation({
-//         mutationFn: importRecipeFromImage
-//     })
-// }
+/***** Upload recipe image *****/
+export function useUploadRecipeImageMutation() {
+    const { axiosInstance } = useContext(FetchContext)
 
-// /***** Confirm imported recipe *****/
-// const confirmImportedRecipe = ({
-//     newRecipeData,
-//     importedRecipeId
-// }: {
-//     newRecipeData: ConfirmImportedRecipePayload
-//     importedRecipeId: number
-// }): Promise<MutationResponse<{ new_recipe_id: number }>> =>
-//     axios.post(`/recipe/confirm-import-from-chrome-extension/${importedRecipeId}`, newRecipeData)
+    const uploadRecipeImage = ({ id, formData }: { id: string; formData: FormData }): Promise<MutationResponse> =>
+        axiosInstance.post(`/api/recipe/${id}/upload-image`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
 
-// export function useConfirmImportedRecipeMutation() {
-//     return useMutation({
-//         mutationFn: confirmImportedRecipe
-//     })
-// }
+    return useMutation({
+        mutationFn: uploadRecipeImage
+    })
+}
+
+/***** Remove recipe image *****/
+export function useRemoveRecipeImageMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+
+    const removeRecipeImage = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/recipe/${id}/remove-image`)
+
+    return useMutation({
+        mutationFn: removeRecipeImage
+    })
+}
+
+/***** Import recipe from image *****/
+export function useImportRecipeFromImageMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+
+    const importRecipeFromImage = (formData: FormData): Promise<MutationResponse<{ imported_recipe: string[] }>> =>
+        axiosInstance.post('/api/recipe/import-from-image', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+
+    return useMutation({
+        mutationFn: importRecipeFromImage
+    })
+}
+
+/***** Confirm imported recipe *****/
+export function useConfirmImportedRecipeMutation() {
+    const { axiosInstance } = useContext(FetchContext)
+
+    const confirmImportedRecipe = ({
+        newRecipeData,
+        importedRecipeId
+    }: {
+        newRecipeData: ConfirmImportedRecipePayload
+        importedRecipeId: number
+    }): Promise<MutationResponse<{ new_recipe_id: number }>> =>
+        axiosInstance.post(`/api/recipe/confirm-import-from-chrome-extension/${importedRecipeId}`, newRecipeData)
+
+    return useMutation({
+        mutationFn: confirmImportedRecipe
+    })
+}

@@ -1,5 +1,5 @@
 import { Picker } from '@react-native-picker/picker'
-import { NativeSyntheticEvent, StyleSheet, TargetedEvent, Text, View } from 'react-native'
+import { NativeSyntheticEvent, StyleProp, StyleSheet, TargetedEvent, Text, View, ViewStyle } from 'react-native'
 import { semantic } from '../../../designTokens'
 
 type PickerProps = {
@@ -11,14 +11,15 @@ type PickerProps = {
         value: string
     }[]
     onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void
+    style?: StyleProp<ViewStyle>
 }
 
-export function _Picker({ label, value, setValue, options, onBlur }: PickerProps) {
+export function _Picker({ label, value, setValue, options, onBlur, style }: PickerProps) {
     return (
-        <View>
-            <Text style={styles.label}>{label}</Text>
+        <View style={style}>
+            {label ? <Text style={styles.label}>{label}</Text> : null}
             <View style={styles.pickerContainer}>
-                <Picker style={{}} selectedValue={value} onValueChange={(itemValue) => setValue(itemValue)} onBlur={onBlur}>
+                <Picker selectedValue={value} onValueChange={(itemValue) => setValue(itemValue)} onBlur={onBlur}>
                     {options.map((option) => {
                         return <Picker.Item key={option.value} label={option.label} value={option.value} />
                     })}

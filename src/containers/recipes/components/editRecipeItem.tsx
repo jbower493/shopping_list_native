@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native'
 import { ItemWithQuantity } from '../../../components/ItemWithQuantity'
 import { semantic } from '../../../designTokens'
 import { query } from '../../../queries'
+import { UpdateRecipeItemQuantity } from './updateRecipeItemQuantity'
 
 interface EditRecipeItemProps {
     item: RecipeItem
@@ -21,13 +22,7 @@ export function EditRecipeItem({ item: { name, id, item_quantity }, recipeId }: 
         <View style={styles.container}>
             <ItemWithQuantity quantityValue={item_quantity.quantity} unitSymbol={item_quantity.quantity_unit?.symbol} itemName={name} />
             <View style={styles.buttonsContainer}>
-                <Pressable
-                    onPress={() => {
-                        // navigate(`/recipes/edit/${recipeId}/update-item-quantity/${id}`)
-                    }}
-                >
-                    <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
-                </Pressable>
+                <UpdateRecipeItemQuantity recipeId={recipeId} />
                 <Pressable onPress={() => removeItem()}>
                     <MaterialCommunityIcon name='delete' size={22} color={semantic.colorTextPrimary} />
                 </Pressable>

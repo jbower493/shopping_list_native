@@ -2,7 +2,7 @@ import axios from 'axios'
 import { retrieveToken } from './tokenStorage'
 
 const axiosInstance = axios.create({
-    baseURL: 'https://4bb8-106-70-122-79.ngrok-free.app',
+    baseURL: 'https://7d68-106-70-122-79.ngrok-free.app',
     withCredentials: false,
     headers: {
         'Shopping-List-Mobile-App': 'true'
