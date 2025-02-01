@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { Input } from '../../../components/Form/Input'
 import { query } from '../../../queries'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
@@ -9,6 +9,7 @@ import { Link } from '../../../components/Link'
 import { DeleteRecipe } from '../components/deleteRecipe'
 import { NewRecipe } from '../components/newRecipe'
 import { useNavigation } from '@react-navigation/native'
+import { semantic } from '../../../designTokens'
 
 export function RecipesScreen() {
     const navigation = useNavigation()
@@ -62,21 +63,25 @@ export function RecipesScreen() {
                             <Text style={styles.uncategorizedInstructions}>Edit the recipe to assign it to a category</Text>
                         ) : null}
                     </View>
-                    <View>
-                        {recipeslist.map((recipe) => (
-                            <View style={styles.recipe} key={recipe.id}>
-                                <Link onPress={() => navigation.navigate('SingleRecipe', { recipeId: recipe.id })}>
-                                    <Text>{recipe.name}</Text>
-                                </Link>
-                                <DeleteRecipe recipeId={recipe.id} recipeName={recipe.name} />
-                            </View>
-                        ))}
-                    </View>
+                    {recipeslist.map((recipe) => (
+                        <View style={styles.recipe} key={recipe.id}>
+                            <Link onPress={() => navigation.navigate('SingleRecipe', { recipeId: recipe.id })}>
+                                <Text>{recipe.name}</Text>
+                            </Link>
+                            <DeleteRecipe recipeId={recipe.id} recipeName={recipe.name} />
+                        </View>
+                    ))}
                 </View>
             )
         }
 
-        return recipeCategoriesOfExistingRecipes.map(({ id, name }) => renderRecipeCategory(id, name))
+        return (
+            <FlatList
+                data={recipeCategoriesOfExistingRecipes}
+                keyExtractor={(recipeCategory) => recipeCategory.id.toString()}
+                renderItem={({ item: recipeCategory }) => renderRecipeCategory(recipeCategory.id, recipeCategory.name)}
+            />
+        )
     }
 
     const noRecipesMessage = search
@@ -97,7 +102,7 @@ export function RecipesScreen() {
 
 const styles = StyleSheet.create({
     main: {
-        padding: 20,
+        padding: semantic.paddingDefault,
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'flex-start'
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: '100%',
-        marginTop: 20,
+        marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
@@ -116,7 +121,8 @@ const styles = StyleSheet.create({
         width: 220
     },
     bottomContainer: {
-        marginTop: 10
+        flex: 1,
+        marginTop: 20
     },
     uncategorizedInstructions: {
         opacity: 0.6,

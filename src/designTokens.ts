@@ -11,7 +11,9 @@ const primitive = {
     colorGreen: '#00c951',
 
     borderRadius5: 5,
-    borderRadius10: 10
+    borderRadius10: 10,
+
+    padding15: 15
 }
 
 export const semantic = {
@@ -31,7 +33,9 @@ export const semantic = {
     colorBorderDefault: primitive.colorGray,
 
     borderRadiusDefault: primitive.borderRadius5,
-    borderRadiusRounded: primitive.borderRadius10
+    borderRadiusRounded: primitive.borderRadius10,
+
+    paddingDefault: primitive.padding15
 }
 
 export const component = {

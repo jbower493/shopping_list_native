@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: semantic.colorBorderPrimary,
         borderRadius: semantic.borderRadiusDefault,
-        padding: 20
+        padding: semantic.paddingDefault
     },
     heading: {
         fontSize: 22,

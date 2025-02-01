@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { query } from '../../../queries'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
@@ -51,20 +51,24 @@ export function SingleRecipeScreen() {
             return null
         }
 
-        return <Text style={styles.instructionsText}>{instructions || 'None set. Click the edit icon above to add some instructions.'}</Text>
+        return (
+            <ScrollView style={styles.instructionsScrollView}>
+                <Text style={styles.instructionsText}>{instructions || 'None set. Click the edit icon above to add some instructions.'}</Text>
+            </ScrollView>
+        )
     }
 
     const renderCurrentItems = () => {
+        const sortedItemsList = [...items].sort((a, b) => (a.name > b.name ? 1 : -1))
+
         return (
             <View style={styles.currentItems}>
                 <Text style={styles.currentItemsTitle}>Items</Text>
-                <View>
-                    {[...items]
-                        .sort((a, b) => (a.name > b.name ? 1 : -1))
-                        .map((item) => (
-                            <EditRecipeItem key={item.id} item={item} recipeId={id} />
-                        ))}
-                </View>
+                <FlatList
+                    data={sortedItemsList}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => <EditRecipeItem key={item.id} item={item} recipeId={id} />}
+                />
             </View>
         )
     }
@@ -159,9 +163,9 @@ export function SingleRecipeScreen() {
 
 const styles = StyleSheet.create({
     main: {
-        padding: 20,
-        flex: 1,
+        padding: semantic.paddingDefault,
         justifyContent: 'flex-start',
+        flex: 1,
         alignItems: 'flex-start'
     },
     topContainer: {
@@ -197,7 +201,8 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     instructions: {
-        marginTop: 16
+        marginTop: 16,
+        width: '100%'
     },
     instructionsTitleContainer: {
         flexDirection: 'row',
@@ -211,13 +216,15 @@ const styles = StyleSheet.create({
     instructionsText: {
         marginTop: 5
     },
+    instructionsScrollView: { maxHeight: 300 },
     addItemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 2
     },
     currentItems: {
-        marginTop: 15
+        marginTop: 15,
+        flex: 1
     },
     currentItemsTitle: {
         fontSize: 18,
