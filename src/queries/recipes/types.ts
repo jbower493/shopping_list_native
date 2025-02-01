@@ -30,7 +30,8 @@ export interface DetailedRecipe {
 export interface AddItemToRecipePayload {
     recipeId: string
     itemName: string
-    categoryId?: string
+    newCategory?: string
+    existingCategoryId?: string
     quantity: number
     quantityUnitId?: number
 }

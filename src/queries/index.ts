@@ -1,8 +1,8 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
-import { categoriesQueryKey, useGetCategoriesQuery } from './categories'
+import { categoriesQueryKey, useCreateCategoryMutation, useGetCategoriesQuery } from './categories'
 import { itemsQueryKey, useGetItemsQuery } from './items'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
-import { recipeCategoriesQueryKey, useRecipeCategoriesQuery } from './recipeCategories'
+import { recipeCategoriesQueryKey, useCreateRecipeCategoryMutation, useRecipeCategoriesQuery } from './recipeCategories'
 import {
     recipesQueryKey,
     useAddItemToRecipeMutation,
@@ -54,6 +54,9 @@ export const query = {
         all: {
             useQuery: useRecipeCategoriesQuery,
             queryKey: recipeCategoriesQueryKey
+        },
+        create: {
+            useMutation: useCreateRecipeCategoryMutation
         }
     },
     quantityUnits: {
@@ -72,6 +75,9 @@ export const query = {
         all: {
             useQuery: useGetCategoriesQuery,
             queryKey: categoriesQueryKey
+        },
+        create: {
+            useMutation: useCreateCategoryMutation
         }
     }
 }

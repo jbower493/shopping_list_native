@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormRow } from '../../../components/Form/FormRow'
 import { useQueryClient } from '@tanstack/react-query'
 import { storeToken } from '../../../queries/utils/tokenStorage'
+import { flashMessage } from '../../../utils/flashMessage'
 
 type Inputs = {
     name: string
@@ -53,6 +54,11 @@ export function RegisterScreen() {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await register(data, {
             onSuccess: async (response) => {
+                flashMessage({
+                    message: response.message,
+                    type: 'success'
+                })
+
                 if (response.data) {
                     await storeToken(response.data?.token)
                 }

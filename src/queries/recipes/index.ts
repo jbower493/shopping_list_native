@@ -13,11 +13,12 @@ import type { MutationResponse, QueryResponse } from '../utils/types'
 import { QueryKeySet } from '../utils/keyFactory'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosResponse } from 'axios'
 import { getQuantityUnits, quantityUnitsQueryKey } from '../quantityUnits'
 import { categoriesQueryKey, getCategories } from '../categories'
 import { getItems, itemsQueryKey } from '../items'
 import { QuantityUnit } from '../quantityUnits/types'
+import { recipeCategoriesQueryKey } from '../recipeCategories'
 
 const recipesKeySet = new QueryKeySet('Recipe')
 
@@ -46,12 +47,41 @@ export function useCreateRecipeMutation() {
     const { axiosInstance } = useContext(FetchContext)
     const queryClient = useQueryClient()
 
-    const createRecipe = (newRecipe: NewRecipe): Promise<MutationResponse<{ recipe_id: number }>> => axiosInstance.post('/api/recipe', newRecipe)
+    const createRecipe = async (newRecipe: NewRecipe & { newRecipeCategory: string }): Promise<MutationResponse<{ recipe_id: number }>> => {
+        const body: NewRecipe = {
+            name: newRecipe.name,
+            prep_time: newRecipe.prep_time,
+            serves: newRecipe.serves,
+            instructions: newRecipe.instructions,
+            recipe_category_id: newRecipe.recipe_category_id
+        }
+
+        if (newRecipe.newRecipeCategory) {
+            // If this errors we can just let it throw and the query will stop executing and return an error
+            const response = await axiosInstance.post<{ name: string }, AxiosResponse<{ recipe_category: { id: number } }>>('/api/recipe-category', {
+                name: newRecipe.newRecipeCategory
+            })
+
+            const newRecipeCategoryId = response.data.recipe_category.id
+
+            body.recipe_category_id = newRecipeCategoryId
+        }
+
+        return axiosInstance.post('/api/recipe', body)
+    }
 
     return useMutation({
         mutationFn: createRecipe,
-        onSuccess(res) {
+        onMutate: (payload) => {
+            return {
+                isNewRecipeCategoryCreated: !!payload.newRecipeCategory
+            }
+        },
+        onSuccess(res, _, context) {
             queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+            if (context.isNewRecipeCategoryCreated) {
+                queryClient.invalidateQueries({ queryKey: recipeCategoriesQueryKey() })
+            }
             prefetchSingleRecipeQuery(res.data?.recipe_id.toString() || '', queryClient, axiosInstance)
         }
     })
@@ -96,16 +126,33 @@ export function prefetchSingleRecipeQuery(recipeId: string, queryClient: QueryCl
 }
 
 /***** Add item to recipe *****/
-
 export function useAddItemToRecipeMutation() {
     const { axiosInstance } = useContext(FetchContext)
     const queryClient = useQueryClient()
 
-    const addItemToRecipe = ({ recipeId, itemName, categoryId, quantity, quantityUnitId }: AddItemToRecipePayload): Promise<MutationResponse> => {
+    const addItemToRecipe = async ({
+        recipeId,
+        itemName,
+        newCategory,
+        existingCategoryId,
+        quantity,
+        quantityUnitId
+    }: AddItemToRecipePayload): Promise<MutationResponse> => {
         const body: { item_name: string; category_id?: string; quantity: number; quantity_unit_id?: number } = { item_name: itemName, quantity }
 
-        if (categoryId) {
-            body.category_id = categoryId
+        if (newCategory) {
+            // If this errors we can just let it throw and the query will stop executing and return an error
+            const response = await axiosInstance.post<{ name: string }, AxiosResponse<{ category: { id: number } }>>('/api/category', {
+                name: newCategory
+            })
+
+            const newCategoryId = response.data.category.id
+
+            body.category_id = newCategoryId.toString()
+        }
+
+        if (existingCategoryId) {
+            body.category_id = existingCategoryId
         }
         if (quantityUnitId) {
             body.quantity_unit_id = quantityUnitId
@@ -140,10 +187,18 @@ export function useAddItemToRecipeMutation() {
                 }
 
                 const getAddedItemCategory = () => {
+                    // It its a new item and a new category, we don't have the id yet
+                    if (payload.newCategory) {
+                        return {
+                            id: -1,
+                            name: payload.newCategory
+                        }
+                    }
+
                     function getCategoryId() {
                         // If its a new item and therefore it is getting assigned a category on creation
-                        if (payload.categoryId) {
-                            return Number(payload.categoryId)
+                        if (payload.existingCategoryId) {
+                            return Number(payload.existingCategoryId)
                         }
 
                         // If its an existing item, check the items list to see what it's category is (if it has a category)

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { semantic } from '../../../designTokens'
 import { Button } from '../../../components/Button'
 import { query } from '../../../queries'
@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { storeToken } from '../../../queries/utils/tokenStorage'
 import { useNavigation } from '@react-navigation/native'
 import { Link } from '../../../components/Link'
+import { flashMessage } from '../../../utils/flashMessage'
 
 type Inputs = {
     email: string
@@ -45,6 +46,11 @@ export function LoginScreen() {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await login(data, {
             onSuccess: async (response) => {
+                flashMessage({
+                    message: response.message,
+                    type: 'success'
+                })
+
                 if (response.data) {
                     await storeToken(response.data?.token)
                 }

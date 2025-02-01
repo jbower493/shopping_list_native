@@ -8,6 +8,7 @@ import { queryClient } from './queries/utils/queryClient'
 import { FetchContext } from './queries/utils/fetchContext'
 import { axiosInstance } from './queries/utils/axiosInstance'
 import { query } from './queries'
+import FlashMessage from 'react-native-flash-message'
 
 const Navigation = createStaticNavigation(RootStack)
 
@@ -36,6 +37,7 @@ export function App() {
         <FetchContext.Provider value={{ axiosInstance: axiosInstance }}>
             <QueryClientProvider client={queryClient}>
                 <TopLevelComponent />
+                <FlashMessage position='top' />
             </QueryClientProvider>
         </FetchContext.Provider>
     )

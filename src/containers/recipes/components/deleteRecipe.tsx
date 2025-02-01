@@ -6,6 +6,7 @@ import { Recipe } from '../../../queries/recipes/types'
 import { Modal } from '../../../components/Modal'
 import { Button } from '../../../components/Button'
 import { query } from '../../../queries'
+import { flashMessage } from '../../../utils/flashMessage'
 
 type DeleteRecipeProps = {
     recipeName: Recipe['name']
@@ -36,8 +37,11 @@ export function DeleteRecipe({ recipeId, recipeName }: DeleteRecipeProps) {
                                 color='error'
                                 onPress={() => {
                                     deleteRecipe(recipeId.toString(), {
-                                        onSuccess: () => {
-                                            // TODO: success notification
+                                        onSuccess: (res) => {
+                                            flashMessage({
+                                                message: res.message,
+                                                type: 'success'
+                                            })
                                             setIsOpen(false)
                                         }
                                     })

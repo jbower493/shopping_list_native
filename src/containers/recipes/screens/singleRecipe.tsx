@@ -22,7 +22,7 @@ export function SingleRecipeScreen() {
     const route = useRoute<RouteProp<RecipesStackParamsList, 'SingleRecipe'>>()
     const { recipeId } = route.params
 
-    const { data: recipeCategoriesData } = query.recipeCategories.all.useQuery()
+    const { data: recipeCategoriesData, isFetching: isRecipeCategoriesFetching } = query.recipeCategories.all.useQuery()
     const {
         data: singleRecipeData,
         isPending: isSingleRecipeLoading,
@@ -32,7 +32,7 @@ export function SingleRecipeScreen() {
 
     const { mutate: addItemToRecipe } = query.recipes.single.addItem.useMutation()
 
-    if (isSingleRecipeLoading || isItemsLoading) {
+    if (isSingleRecipeLoading || isItemsLoading || isRecipeCategoriesFetching) {
         return <FullScreenLoader />
     }
 
@@ -132,12 +132,15 @@ export function SingleRecipeScreen() {
             </View>
 
             <AddItem
-                onAdd={(itemToAdd, categoryId, quantity, quantityUnitId) => {
+                onAdd={(itemToAdd, newCategory, existingCategoryId, quantity, quantityUnitId) => {
                     const payload: AddItemToRecipePayload = { recipeId: id.toString(), itemName: itemToAdd, quantity }
 
-                    if (categoryId && categoryId !== 'none') {
-                        payload.categoryId = categoryId
+                    if (newCategory) {
+                        payload.newCategory = newCategory
+                    } else if (existingCategoryId && existingCategoryId !== 'none') {
+                        payload.existingCategoryId = existingCategoryId
                     }
+
                     if (quantityUnitId) {
                         payload.quantityUnitId = quantityUnitId
                     }

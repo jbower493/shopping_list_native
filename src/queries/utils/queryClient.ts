@@ -1,8 +1,8 @@
 import { QueryClient } from '@tanstack/react-query'
 import { AxiosError, isAxiosError } from 'axios'
-// import { toast } from 'react-hot-toast'
+import { flashMessage } from '../../utils/flashMessage'
 
-export const fireErrorNotification = (err: unknown) => {
+const fireErrorNotification = (err: unknown) => {
     let errorMessage = 'Something went wrong.'
 
     if (isAxiosError(err)) {
@@ -23,8 +23,10 @@ export const fireErrorNotification = (err: unknown) => {
         }
     }
 
-    console.error(errorMessage)
-    // toast.error(errorMessage)
+    flashMessage({
+        message: errorMessage,
+        type: 'error'
+    })
 }
 
 export const queryClient = new QueryClient({

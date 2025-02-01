@@ -8,6 +8,7 @@ const primitive = {
     colorGray400: '#d1d5dc',
     colorRed: '#ef4444',
     colorSky: '#00a6f4',
+    colorGreen: '#00c951',
 
     borderRadius5: 5,
     borderRadius10: 10
@@ -25,6 +26,7 @@ export const semantic = {
     colorBackgroundSecondary: primitive.colorGray200,
     colorBackgroundError: primitive.colorRed,
     colorBackgroundInfo: primitive.colorSky,
+    colorBackgroundSuccess: primitive.colorGreen,
     colorBorderPrimary: primitive.colorPrimary,
     colorBorderDefault: primitive.colorGray,
 

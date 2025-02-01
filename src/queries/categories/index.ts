@@ -30,7 +30,8 @@ export function prefetchGetCategoriesQuery(axiosInstance: AxiosInstance, queryCl
 export function useCreateCategoryMutation() {
     const { axiosInstance } = useContext(FetchContext)
 
-    const createCategory = (newCategory: NewCategory): Promise<MutationResponse> => axiosInstance.post('/api/category', newCategory)
+    const createCategory = (newCategory: NewCategory): Promise<MutationResponse<{ category: Category }>> =>
+        axiosInstance.post('/api/category', newCategory)
 
     return useMutation({
         mutationFn: createCategory

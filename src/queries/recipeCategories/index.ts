@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EditRecipeCategoryPayload, NewRecipeCategory, RecipeCategory } from '../recipeCategories/types'
 import { QueryKeySet } from '../utils/keyFactory'
 import type { MutationResponse, QueryResponse } from '../utils/types'
@@ -30,12 +30,16 @@ export function prefetchGetRecipeCategoriesQuery(queryClient: QueryClient, axios
 /***** Create recipe category *****/
 export function useCreateRecipeCategoryMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
-    const createRecipeCategory = (newRecipeCategory: NewRecipeCategory): Promise<MutationResponse> =>
+    const createRecipeCategory = (newRecipeCategory: NewRecipeCategory): Promise<MutationResponse<{ recipe_category: RecipeCategory }>> =>
         axiosInstance.post('/api/recipe-category', newRecipeCategory)
 
     return useMutation({
-        mutationFn: createRecipeCategory
+        mutationFn: createRecipeCategory,
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: recipeCategoriesQueryKey() })
+        }
     })
 }
 

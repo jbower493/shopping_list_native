@@ -6,13 +6,16 @@ import { FormRow } from '../../../components/Form/FormRow'
 import { Picker } from '../../../components/Form/Picker'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button } from '../../../components/Button'
+import { Input } from '../../../components/Form/Input'
+import { semantic } from '../../../designTokens'
 
 type Inputs = {
     categoryId: string
+    newCategory: string
 }
 
 interface NewItemCategoryFormProps {
-    onSubmitFunc: (categoryId: string) => void
+    onSubmitFunc: (existingCategoryId: string | null, newCategory: string | null) => void
     isOpen: boolean
     close: () => void
     itemName: string
@@ -22,11 +25,18 @@ export function NewItemCategoryForm({ onSubmitFunc, isOpen, close, itemName }: N
     const { data: categoriesData, isFetching: isCategoriesFetching, isError: isCategoriesError } = query.itemCategories.all.useQuery()
 
     const methods = useForm<Inputs>({
-        mode: 'all'
+        mode: 'all',
+        defaultValues: {
+            categoryId: 'none',
+            newCategory: ''
+        }
     })
 
-    const onSubmit: SubmitHandler<Inputs> = async ({ categoryId }) => {
-        onSubmitFunc(categoryId)
+    const categoryIdValue = methods.watch('categoryId')
+    const newCategoryValue = methods.watch('newCategory')
+
+    const onSubmit: SubmitHandler<Inputs> = async ({ categoryId, newCategory }) => {
+        onSubmitFunc(categoryId || null, newCategory || null)
     }
 
     const renderForm = () => {
@@ -42,7 +52,26 @@ export function NewItemCategoryForm({ onSubmitFunc, isOpen, close, itemName }: N
             <FormProvider {...methods}>
                 <Modal.Body isLoading={isCategoriesFetching}>
                     <FormRow>
-                        <Picker.HookForm label='Category' name='categoryId' options={getCategoryOptions(categoriesData)} />
+                        <View>
+                            <FormRow>
+                                <Picker.HookForm
+                                    label='Choose Existing Category'
+                                    name='categoryId'
+                                    options={getCategoryOptions(categoriesData)}
+                                    isDisabled={!!newCategoryValue}
+                                />
+                            </FormRow>
+                            <FormRow>
+                                <Text style={styles.or}>OR</Text>
+                            </FormRow>
+                            <FormRow>
+                                <Input.HookForm
+                                    label='Create New Category'
+                                    name='newCategory'
+                                    isDisabled={!!categoryIdValue && categoryIdValue !== 'none'}
+                                />
+                            </FormRow>
+                        </View>
                     </FormRow>
                 </Modal.Body>
                 <Modal.Footer>
@@ -50,13 +79,7 @@ export function NewItemCategoryForm({ onSubmitFunc, isOpen, close, itemName }: N
                         <Button color='secondary' onPress={close}>
                             Back
                         </Button>
-                        <Button
-                            isLoading={methods.formState.isSubmitting}
-                            isDisabled={!methods.formState.isValid}
-                            onPress={methods.handleSubmit(onSubmit)}
-                        >
-                            Add Item
-                        </Button>
+                        <Button onPress={methods.handleSubmit(onSubmit)}>Add Item</Button>
                     </View>
                 </Modal.Footer>
             </FormProvider>
@@ -80,5 +103,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         justifyContent: 'flex-end'
+    },
+    or: {
+        color: semantic.colorTextPrimary
     }
 })

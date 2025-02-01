@@ -13,6 +13,7 @@ type InputHookFormWrapperProps = {
     secureTextEntry?: boolean
     isTextArea?: boolean
     style?: StyleProp<ViewStyle>
+    isDisabled?: boolean
 }
 
 export function InputHookFormWrapper({
@@ -23,7 +24,8 @@ export function InputHookFormWrapper({
     keyboardType,
     secureTextEntry,
     isTextArea,
-    style
+    style,
+    isDisabled
 }: InputHookFormWrapperProps) {
     const { field, fieldState } = useController({ name })
 
@@ -39,6 +41,7 @@ export function InputHookFormWrapper({
                 keyboardType={keyboardType}
                 secureTextEntry={secureTextEntry}
                 isTextArea={isTextArea}
+                isDisabled={isDisabled}
             />
             <ErrorMessage error={fieldState.isTouched && fieldState.error} />
         </View>

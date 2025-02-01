@@ -24,6 +24,7 @@
         "react-hook-form": "^7.54.2",
         "react-native": "0.76.5",
         "react-native-bootsplash": "^6.3.2",
+        "react-native-flash-message": "^0.4.2",
         "react-native-keychain": "^9.2.2",
         "react-native-safe-area-context": "^5.0.0",
         "react-native-screens": "^4.4.0",

@@ -10,7 +10,7 @@ import { ComboBox } from '../../../components/Form/Combobox'
 import { NewItemCategoryForm } from './newItemCategoryForm'
 
 interface AddItemProps {
-    onAdd: (itemToAdd: string, categoryId: string | null, quantity: number, quantityUnitId: number | null) => void
+    onAdd: (itemToAdd: string, newCategory: string | null, existingCategoryId: string | null, quantity: number, quantityUnitId: number | null) => void
     itemsList: Item[]
 }
 
@@ -24,10 +24,10 @@ export function AddItem({ onAdd, itemsList }: AddItemProps) {
 
     const isNewItem = !itemsList.find(({ name }) => name === itemToAdd)
 
-    function addItem(itemToAddLocal: string, categoryId: string | null = null) {
+    function addItem(itemToAddLocal: string, newCategory: string | null, existingCategoryId: string | null) {
         const quanityUnitItToSend = quantityUnitToAdd === 'NO_UNIT' ? null : Number(quantityUnitToAdd)
 
-        onAdd(itemToAddLocal, categoryId, Number(quantityValueToAdd), quanityUnitItToSend)
+        onAdd(itemToAddLocal, newCategory, existingCategoryId, Number(quantityValueToAdd), quanityUnitItToSend)
     }
 
     const quantityUnitOptions = [
@@ -55,7 +55,7 @@ export function AddItem({ onAdd, itemsList }: AddItemProps) {
                             if (isNewItem) {
                                 setIsCategoryModalOpen(true)
                             } else {
-                                addItem(itemToAdd)
+                                addItem(itemToAdd, null, null)
                                 setItemToAdd('')
                                 setQuantityValueToAdd('1')
                                 setQuantityUnitToAdd('NO_UNIT')
@@ -69,9 +69,9 @@ export function AddItem({ onAdd, itemsList }: AddItemProps) {
             <NewItemCategoryForm
                 isOpen={isCategoryModalOpen}
                 close={() => setIsCategoryModalOpen(false)}
-                onSubmitFunc={(categoryId) => {
+                onSubmitFunc={(existingCategoryId, newCategory) => {
                     setIsCategoryModalOpen(false)
-                    addItem(itemToAdd, categoryId)
+                    addItem(itemToAdd, newCategory, existingCategoryId)
                     setItemToAdd('')
                     setQuantityValueToAdd('1')
                     setQuantityUnitToAdd('NO_UNIT')

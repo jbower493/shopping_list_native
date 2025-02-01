@@ -27,6 +27,7 @@ type InputFieldProps = {
     isTextArea?: boolean
     style?: StyleProp<ViewStyle>
     inputRef?: React.LegacyRef<TextInput>
+    isDisabled?: boolean
 }
 
 type TInputField = React.FC<InputFieldProps>
@@ -44,14 +45,15 @@ export const InputComponent: TInputField = ({
     containerStyle,
     isTextArea,
     style,
-    inputRef
+    inputRef,
+    isDisabled
 }) => {
     return (
         <View style={[containerStyle, style]}>
             {label ? <Text style={styles.label}>{label}</Text> : null}
             <TextInput
                 ref={inputRef}
-                style={[styles.input, isTextArea ? styles.textArea : null]}
+                style={[styles.input, isTextArea ? styles.textArea : null, isDisabled ? styles.disabledInput : null]}
                 onChangeText={onChangeText}
                 value={value}
                 placeholder={placeholder}
@@ -62,6 +64,7 @@ export const InputComponent: TInputField = ({
                 secureTextEntry={secureTextEntry}
                 multiline={!!isTextArea}
                 numberOfLines={isTextArea ? 4 : undefined}
+                editable={!isDisabled}
             />
         </View>
     )
@@ -76,6 +79,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: semantic.colorBorderDefault,
         padding: 8
+    },
+    disabledInput: {
+        backgroundColor: semantic.colorBackgroundSecondary
     },
     textArea: {
         height: 100,

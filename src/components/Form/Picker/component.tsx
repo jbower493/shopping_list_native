@@ -12,14 +12,15 @@ type PickerProps = {
     }[]
     onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void
     style?: StyleProp<ViewStyle>
+    isDisabled?: boolean
 }
 
-export function _Picker({ label, value, setValue, options, onBlur, style }: PickerProps) {
+export function _Picker({ label, value, setValue, options, onBlur, style, isDisabled }: PickerProps) {
     return (
         <View style={style}>
             {label ? <Text style={styles.label}>{label}</Text> : null}
-            <View style={styles.pickerContainer}>
-                <Picker selectedValue={value} onValueChange={(itemValue) => setValue(itemValue)} onBlur={onBlur}>
+            <View style={[styles.pickerContainer, isDisabled ? styles.disabledPicker : null]}>
+                <Picker selectedValue={value} onValueChange={(itemValue) => setValue(itemValue)} onBlur={onBlur} enabled={!isDisabled}>
                     {options.map((option) => {
                         return <Picker.Item key={option.value} label={option.label} value={option.value} />
                     })}
@@ -44,5 +45,8 @@ const styles = StyleSheet.create({
     picker: {
         flex: 1,
         color: semantic.colorTextDefault
+    },
+    disabledPicker: {
+        backgroundColor: semantic.colorBackgroundSecondary
     }
 })

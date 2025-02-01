@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import * as z from 'zod'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,6 +10,9 @@ import { Modal } from '../../../components/Modal'
 import { query } from '../../../queries'
 import { Picker } from '../../../components/Form/Picker'
 import { getRecipeCategoryOptions } from '../../../utils/functions'
+import { semantic } from '../../../designTokens'
+import { flashMessage } from '../../../utils/flashMessage'
+import { useNavigation } from '@react-navigation/native'
 
 type Inputs = {
     name: string
@@ -17,6 +20,7 @@ type Inputs = {
     instructions: string
     prepTime: string
     serves: string
+    newRecipeCategory: string
 }
 
 const schema = z.object({
@@ -24,13 +28,16 @@ const schema = z.object({
     instructions: z.string(),
     recipeCategoryId: z.string(),
     prepTime: z.coerce.number(),
-    serves: z.coerce.number()
+    serves: z.coerce.number(),
+    newRecipeCategory: z.string()
 })
 
 export function NewRecipe() {
+    const navigation = useNavigation()
+
     const [isOpen, setIsOpen] = useState(false)
 
-    const { data: recipeCategoriesData, isFetching: isRecipeCategoriesFetching } = query.recipeCategories.all.useQuery()
+    const { data: recipeCategoriesData, isPending: isRecipeCategoriesPending } = query.recipeCategories.all.useQuery()
 
     const { mutateAsync: createRecipe } = query.recipes.create.useMutation()
 
@@ -41,30 +48,37 @@ export function NewRecipe() {
             name: '',
             instructions: '',
             recipeCategoryId: 'none',
+            newRecipeCategory: '',
             prepTime: '15',
             serves: '1'
         }
     })
+
+    const recipeCategoryIdValue = methods.watch('recipeCategoryId')
+    const newRecipeCategoryValue = methods.watch('newRecipeCategory')
 
     const {
         handleSubmit,
         formState: { isValid, isSubmitting }
     } = methods
 
-    const onSubmit: SubmitHandler<Inputs> = async ({ name, recipeCategoryId, instructions, prepTime, serves }) => {
+    const onSubmit: SubmitHandler<Inputs> = async ({ name, newRecipeCategory, recipeCategoryId, instructions, prepTime, serves }) => {
         await createRecipe(
             {
                 name,
+                newRecipeCategory: newRecipeCategory,
                 recipe_category_id: recipeCategoryId === 'none' ? null : Number(recipeCategoryId),
                 instructions,
                 prep_time: Number(prepTime),
                 serves: Number(serves)
             },
             {
-                onSuccess: () => {
-                    // TODO: success notification
-                    // TODO: navigate to single recipe screen
-                    setIsOpen(false)
+                onSuccess: (res) => {
+                    flashMessage({
+                        message: res.message,
+                        type: 'success'
+                    })
+                    navigation.navigate('SingleRecipe', { recipeId: res.data?.recipe_id })
                 }
             }
         )
@@ -76,16 +90,27 @@ export function NewRecipe() {
             <Modal isOpen={isOpen} close={() => setIsOpen(false)} title='New Recipe'>
                 <View>
                     <FormProvider {...methods}>
-                        <Modal.Body isLoading={isRecipeCategoriesFetching}>
+                        <Modal.Body isLoading={isRecipeCategoriesPending}>
                             <View>
                                 <FormRow>
                                     <Input.HookForm label='Name' name='name' />
                                 </FormRow>
                                 <FormRow>
                                     <Picker.HookForm
-                                        label='Category'
+                                        label='Choose Existing Category'
                                         name='recipeCategoryId'
                                         options={getRecipeCategoryOptions(recipeCategoriesData)}
+                                        isDisabled={!!newRecipeCategoryValue}
+                                    />
+                                </FormRow>
+                                <FormRow>
+                                    <Text style={styles.or}>OR</Text>
+                                </FormRow>
+                                <FormRow>
+                                    <Input.HookForm
+                                        label='Create New Category'
+                                        name='newRecipeCategory'
+                                        isDisabled={!!recipeCategoryIdValue && recipeCategoryIdValue !== 'none'}
                                     />
                                 </FormRow>
                                 <View style={styles.doubleFormRow}>
@@ -132,5 +157,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         justifyContent: 'flex-end'
+    },
+    or: {
+        color: semantic.colorTextPrimary
     }
 })
