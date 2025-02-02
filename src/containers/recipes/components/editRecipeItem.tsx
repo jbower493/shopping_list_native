@@ -22,7 +22,7 @@ export function EditRecipeItem({ item: { name, id, item_quantity }, recipeId }: 
         <View style={styles.container}>
             <ItemWithQuantity quantityValue={item_quantity.quantity} unitSymbol={item_quantity.quantity_unit?.symbol} itemName={name} />
             <View style={styles.buttonsContainer}>
-                <UpdateRecipeItemQuantity recipeId={recipeId} />
+                <UpdateRecipeItemQuantity recipeId={recipeId} itemId={id} />
                 <Pressable onPress={() => removeItem()}>
                     <MaterialCommunityIcon name='delete' size={22} color={semantic.colorTextPrimary} />
                 </Pressable>

@@ -10,7 +10,8 @@ import {
     useDeleteRecipeMutation,
     useRecipesQuery,
     useRemoveItemFromRecipeMutation,
-    useSingleRecipeQuery
+    useSingleRecipeQuery,
+    useUpdateRecipeItemQuantityMutation
 } from './recipes'
 
 export const query = {
@@ -44,6 +45,9 @@ export const query = {
             },
             addItem: {
                 useMutation: useAddItemToRecipeMutation
+            },
+            itemQuantity: {
+                useMutation: useUpdateRecipeItemQuantityMutation
             }
         },
         create: {
