@@ -380,6 +380,7 @@ export function useEditRecipeMutation() {
 /***** Duplicate recipe *****/
 export function useDuplicateRecipeMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const duplicateRecipe = ({
         recipeId,
@@ -390,7 +391,10 @@ export function useDuplicateRecipeMutation() {
     }): Promise<MutationResponse<{ new_recipe_id: number }>> => axiosInstance.post(`/api/recipe/${recipeId}/duplicate`, attributes)
 
     return useMutation({
-        mutationFn: duplicateRecipe
+        mutationFn: duplicateRecipe,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+        }
     })
 }
 
@@ -473,7 +477,7 @@ export function useUpdateRecipeItemQuantityMutation() {
     })
 }
 
-/***** Accept shared recipe *****/
+/***** Share recipe *****/
 export function useCreateShareRecipeRequestMutation() {
     const { axiosInstance } = useContext(FetchContext)
 

@@ -2,18 +2,30 @@ import { Platform, View } from 'react-native'
 import { Menu } from '../../../components/Menu'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
+import { DuplicateRecipeForm } from './duplicateRecipeForm'
+import { useState } from 'react'
+import { Recipe } from '../../../queries/recipes/types'
+import { ShareRecipeForm } from './shareRecipeForm'
 
-export function MoreOptions() {
+type MoreOptionsProps = {
+    recipeId: Recipe['id']
+    recipeName: Recipe['name']
+}
+
+export function MoreOptions({ recipeId, recipeName }: MoreOptionsProps) {
+    const [isDuplicateRecipeOpen, setIsDuplicateRecipeOpen] = useState(false)
+    const [isShareRecipeOpen, setIsShareRecipeOpen] = useState(false)
+
     return (
         <Menu
-            title='Uncle Bob'
+            title='More Recipe Options'
             onSelect={(selectedAction) => {
                 switch (selectedAction) {
                     case 'duplicate':
-                        // TODO: do something
+                        setIsDuplicateRecipeOpen(true)
                         break
                     case 'share':
-                        // TODO: do something
+                        setIsShareRecipeOpen(true)
                         break
                     default:
                         break
@@ -44,6 +56,13 @@ export function MoreOptions() {
         >
             <View>
                 <MaterialCommunityIcon name='dots-horizontal-circle-outline' size={22} color={semantic.colorTextPrimary} />
+                <DuplicateRecipeForm
+                    isOpen={isDuplicateRecipeOpen}
+                    setIsOpen={setIsDuplicateRecipeOpen}
+                    recipeId={recipeId}
+                    recipeName={recipeName}
+                />
+                <ShareRecipeForm isOpen={isShareRecipeOpen} setIsOpen={setIsShareRecipeOpen} recipeId={recipeId} recipeName={recipeName} />
             </View>
         </Menu>
     )

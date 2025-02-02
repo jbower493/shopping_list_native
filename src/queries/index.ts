@@ -7,7 +7,9 @@ import {
     recipesQueryKey,
     useAddItemToRecipeMutation,
     useCreateRecipeMutation,
+    useCreateShareRecipeRequestMutation,
     useDeleteRecipeMutation,
+    useDuplicateRecipeMutation,
     useEditRecipeMutation,
     useRecipesQuery,
     useRemoveItemFromRecipeMutation,
@@ -52,6 +54,12 @@ export const query = {
             },
             update: {
                 useMutation: useEditRecipeMutation
+            },
+            duplicate: {
+                useMutation: useDuplicateRecipeMutation
+            },
+            share: {
+                useMutation: useCreateShareRecipeRequestMutation
             }
         },
         create: {

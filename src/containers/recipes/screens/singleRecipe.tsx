@@ -82,7 +82,7 @@ export function SingleRecipeScreen() {
                         <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
                     </Pressable>
                 </View>
-                <MoreOptions />
+                <MoreOptions recipeId={recipeId} recipeName={singleRecipeData.name} />
             </View>
             <View style={styles.recipeMeta}>
                 <CategoryTag categoriesData={recipeCategoriesData || []} categoryName={recipe_category?.name || 'Uncategorized'} />

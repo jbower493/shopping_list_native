@@ -4,3 +4,9 @@ rename the file inside of android/.gradle/8.10.2/dependency-accessors to the one
 splash screen bg color is in android\app\src\main\res\values\colors.xml, but not sure if this actually gets shown unless you have a splash image with a transparent background
 
 hiding the splash with react-native-splash-screen doesn't seem to actually hide it. Maybe use `react-native-bootsplash` instead.
+
+
+Still todo:
+- Once have Mac, go through every installed library and follow the ios setup steps.
+- Recipe image upload feature
+- Test "share recipe" with actual email sending
