@@ -13,8 +13,10 @@ import {
     useEditRecipeMutation,
     useRecipesQuery,
     useRemoveItemFromRecipeMutation,
+    useRemoveRecipeImageMutation,
     useSingleRecipeQuery,
-    useUpdateRecipeItemQuantityMutation
+    useUpdateRecipeItemQuantityMutation,
+    useUploadRecipeImageMutation
 } from './recipes'
 
 export const query = {
@@ -60,6 +62,12 @@ export const query = {
             },
             share: {
                 useMutation: useCreateShareRecipeRequestMutation
+            },
+            uploadImage: {
+                useMutation: useUploadRecipeImageMutation
+            },
+            removeImage: {
+                useMutation: useRemoveRecipeImageMutation
             }
         },
         create: {

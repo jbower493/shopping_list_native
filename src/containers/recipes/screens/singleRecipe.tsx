@@ -14,6 +14,7 @@ import { Link } from '../../../components/Link'
 import { EditRecipeItem } from '../components/editRecipeItem'
 import { AddItem } from '../components/addItem'
 import { AddItemToRecipePayload } from '../../../queries/recipes/types'
+import { RecipeImage } from '../components/recipeImage'
 
 export function SingleRecipeScreen() {
     const [isEditRecipeFormOpen, setIsEditRecipeFormOpen] = useState(false)
@@ -44,7 +45,7 @@ export function SingleRecipeScreen() {
         )
     }
 
-    const { name, id, items, instructions, recipe_category, image_url, prep_time, serves } = singleRecipeData
+    const { name, id, items, instructions, recipe_category, prep_time, serves } = singleRecipeData
 
     const renderInstructions = () => {
         if (!isInstructionsShowing) {
@@ -97,32 +98,8 @@ export function SingleRecipeScreen() {
                     <Text>{serves || '?'}</Text>
                 </View>
             </View>
-            {/* TODO: do this once everything else is finished, as I need to get minio working locally again. */}
-            {image_url ? (
-                // <div className='relative mt-4 h-44 max-w-[450px]'>
-                //     <img className='h-full w-full object-cover rounded-md' src={image_url || ''} alt={name} />
-                //     <Dropdown
-                //         dropdownClassName='!absolute top-3 right-3 h-8 w-8'
-                //         menuButtonClassName='bg-white w-full h-full flex justify-center items-center rounded-full'
-                //         menuButton={<EllipsisHorizontalIcon className='size-6' style={{ transform: 'scale(400%)' }} />}
-                //         menuItems={[
-                //             <Dropdown.MenuItem.Link key='1' to={`/recipes/edit/${id}/upload-image`}>
-                //                 <CloudArrowUpIcon className='size-4 text-primary' />
-                //                 Upload new
-                //             </Dropdown.MenuItem.Link>,
-                //             <Dropdown.MenuItem.Link key='2' to={`/recipes/edit/${id}/remove-image`}>
-                //                 <TrashIcon className='size-4 text-primary' />
-                //                 Remove
-                //             </Dropdown.MenuItem.Link>
-                //         ]}
-                //     />
-                // </div>
-                <Text>Have image</Text>
-            ) : (
-                <Link style={styles.uploadImageLink} onPress={() => {}}>
-                    Upload Image
-                </Link>
-            )}
+
+            <RecipeImage recipeId={id} />
 
             <View style={styles.instructions}>
                 <View style={styles.instructionsTitleContainer}>
@@ -196,9 +173,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 5,
         alignItems: 'center'
-    },
-    uploadImageLink: {
-        marginTop: 10
     },
     instructions: {
         marginTop: 16,

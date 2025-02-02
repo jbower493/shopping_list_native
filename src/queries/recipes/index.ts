@@ -526,11 +526,15 @@ export function useUploadRecipeImageMutation() {
 /***** Remove recipe image *****/
 export function useRemoveRecipeImageMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const removeRecipeImage = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/recipe/${id}/remove-image`)
 
     return useMutation({
-        mutationFn: removeRecipeImage
+        mutationFn: removeRecipeImage,
+        onSuccess: (_, recipeId) => {
+            queryClient.invalidateQueries({ queryKey: singleRecipeQueryKey(recipeId) })
+        }
     })
 }
 
