@@ -9,6 +9,7 @@ export type RecipesStackParamsList = {
 }
 
 export const RecipesStackNavigator = createNativeStackNavigator<RecipesStackParamsList>({
+    initialRouteName: 'RecipesHome',
     screenOptions: {
         headerTintColor: semantic.colorTextPrimary
     },

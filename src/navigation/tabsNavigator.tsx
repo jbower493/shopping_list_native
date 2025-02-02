@@ -6,7 +6,9 @@ import { semantic } from '../designTokens'
 import { ListsStackNavigator } from '../containers/lists/stackNavigator'
 import { RecipesStackNavigator } from '../containers/recipes/stackNavigator'
 import { MenusStackNavigator } from '../containers/menus/stackNavigator'
-import { ItemsStackNavigator } from '../containers/items/stackNavigator'
+import { SettingsStackNavigator } from '../containers/settings/stackNavigator'
+import { Pressable } from 'react-native'
+import { SettingsTabButton } from '../containers/settings/settingsTabButton'
 
 export const TabsNavigator = createBottomTabNavigator({
     screenOptions: {
@@ -17,28 +19,50 @@ export const TabsNavigator = createBottomTabNavigator({
             screen: ListsStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='format-list-bulleted' size={size} color={color} />
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='format-list-bulleted' size={size} color={color} />,
+                tabBarButton: ({ onPress, children }) => {
+                    return (
+                        <Pressable onPress={onPress} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            {children}
+                        </Pressable>
+                    )
+                }
             }
         },
         Recipes: {
             screen: RecipesStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='food-variant' size={size} color={color} />
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='food-variant' size={size} color={color} />,
+                tabBarButton: ({ onPress, children }) => {
+                    return (
+                        <Pressable onPress={onPress} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            {children}
+                        </Pressable>
+                    )
+                }
             }
         },
         Menus: {
             screen: MenusStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({ color, size }) => <MaterialIcon name='restaurant-menu' size={size} color={color} />
+                tabBarIcon: ({ color, size }) => <MaterialIcon name='restaurant-menu' size={size} color={color} />,
+                tabBarButton: ({ onPress, children }) => {
+                    return (
+                        <Pressable onPress={onPress} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            {children}
+                        </Pressable>
+                    )
+                }
             }
         },
-        Items: {
-            screen: ItemsStackNavigator,
+        Settings: {
+            screen: SettingsStackNavigator,
             options: {
                 headerShown: false,
-                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='food-apple' size={size} color={color} />
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='cog' size={size} color={color} />,
+                tabBarButton: SettingsTabButton
             }
         }
     }

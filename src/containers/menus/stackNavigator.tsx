@@ -3,6 +3,7 @@ import { semantic } from '../../designTokens'
 import { MenusScreen } from './screens/menus'
 
 export const MenusStackNavigator = createNativeStackNavigator({
+    initialRouteName: 'MenusHome',
     screenOptions: {
         headerTintColor: semantic.colorTextPrimary
     },

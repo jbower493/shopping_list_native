@@ -24,7 +24,10 @@ export function UploadImageForm({ recipeId, recipeName, isOpen, setIsOpen, hasEx
             <View>
                 <Modal.Body>
                     {hasExistingImage ? (
-                        <Text>Warning: Uploading a new image for this recipe will permanently remove the current recipe image.</Text>
+                        <Text style={styles.warningOuter}>
+                            <Text style={styles.warning}>Warning: </Text>Uploading a new image for this recipe will permanently remove the current
+                            recipe image.
+                        </Text>
                     ) : null}
                     <FormRow>
                         <Text>Input</Text>
@@ -50,5 +53,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         justifyContent: 'flex-end'
+    },
+    warningOuter: {
+        marginBottom: 15
+    },
+    warning: {
+        fontWeight: 600
     }
 })

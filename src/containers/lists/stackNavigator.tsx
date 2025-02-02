@@ -30,6 +30,7 @@ function HeaderRightComponent(props: NativeStackHeaderRightProps) {
 }
 
 export const ListsStackNavigator = createNativeStackNavigator({
+    initialRouteName: 'ListsHome',
     screenOptions: {
         headerTintColor: semantic.colorTextPrimary
     },
