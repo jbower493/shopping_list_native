@@ -19,6 +19,7 @@ import { categoriesQueryKey, getCategories } from '../categories'
 import { getItems, itemsQueryKey } from '../items'
 import { QuantityUnit } from '../quantityUnits/types'
 import { recipeCategoriesQueryKey } from '../recipeCategories'
+import { menusQueryKey } from '../menus'
 
 const recipesKeySet = new QueryKeySet('Recipe')
 
@@ -263,7 +264,6 @@ export function useAddItemToRecipeMutation() {
         onError: (err, variables, context) => {
             // Roll back to old data on error
             queryClient.setQueryData(singleRecipeQueryKey(variables.recipeId), context?.singleListQueryData)
-            // fireErrorNotification(err)
         }
     })
 }
@@ -326,12 +326,54 @@ export function useRemoveItemFromRecipeMutation() {
 /***** Edit recipe *****/
 export function useEditRecipeMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
-    const editRecipe = ({ recipeId, attributes }: { recipeId: string; attributes: EditRecipePayload }): Promise<MutationResponse> =>
-        axiosInstance.put(`/api/recipe/${recipeId}`, attributes)
+    const editRecipe = async ({
+        recipeId,
+        attributes,
+        newRecipeCategory
+    }: {
+        recipeId: string
+        attributes: EditRecipePayload
+        newRecipeCategory: string
+    }): Promise<MutationResponse> => {
+        const body: NewRecipe = {
+            name: attributes.name,
+            prep_time: attributes.prep_time,
+            serves: attributes.serves,
+            instructions: attributes.instructions,
+            recipe_category_id: attributes.recipe_category_id
+        }
+
+        if (newRecipeCategory) {
+            // If this errors we can just let it throw and the query will stop executing and return an error
+            const response = await axiosInstance.post<{ name: string }, AxiosResponse<{ recipe_category: { id: number } }>>('/api/recipe-category', {
+                name: newRecipeCategory
+            })
+
+            const newRecipeCategoryId = response.data.recipe_category.id
+
+            body.recipe_category_id = newRecipeCategoryId
+        }
+
+        return axiosInstance.put(`/api/recipe/${recipeId}`, body)
+    }
 
     return useMutation({
-        mutationFn: editRecipe
+        mutationFn: editRecipe,
+        onMutate: (payload) => {
+            return {
+                isNewRecipeCategoryCreated: !!payload.newRecipeCategory
+            }
+        },
+        onSuccess: (res, variables, context) => {
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+            queryClient.invalidateQueries({ queryKey: menusQueryKey() })
+
+            if (context.isNewRecipeCategoryCreated) {
+                queryClient.invalidateQueries({ queryKey: recipeCategoriesQueryKey() })
+            }
+        }
     })
 }
 

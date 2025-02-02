@@ -1,8 +1,9 @@
 import { View, StyleSheet, Text } from 'react-native'
 import { modalPadding } from './consts'
+import { ReactNode } from 'react'
 
 type ModalBodyProps = {
-    children: React.JSX.Element
+    children: ReactNode
     isLoading?: boolean
     isError?: boolean
 }
