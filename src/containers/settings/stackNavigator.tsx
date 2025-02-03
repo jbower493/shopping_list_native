@@ -1,14 +1,16 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { semantic } from '../../designTokens'
 import { ItemsScreen } from './screens/items'
 import { RecipeCategoriesScreen } from './screens/recipeCategories'
 import { CategoriesScreen } from './screens/categories'
 import { AccountScreen } from './screens/account'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-export const SettingsStackNavigator = createNativeStackNavigator({
-    initialRouteName: 'Account',
+export const SettingsTabNavigator = createBottomTabNavigator({
     screenOptions: {
-        headerTintColor: semantic.colorTextPrimary
+        headerTintColor: semantic.colorTextPrimary,
+        tabBarStyle: {
+            display: 'none'
+        }
     },
     screens: {
         Account: {

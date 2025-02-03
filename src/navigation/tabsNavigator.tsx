@@ -6,7 +6,7 @@ import { semantic } from '../designTokens'
 import { ListsStackNavigator } from '../containers/lists/stackNavigator'
 import { RecipesStackNavigator } from '../containers/recipes/stackNavigator'
 import { MenusStackNavigator } from '../containers/menus/stackNavigator'
-import { SettingsStackNavigator } from '../containers/settings/stackNavigator'
+import { SettingsTabNavigator } from '../containers/settings/stackNavigator'
 import { Pressable } from 'react-native'
 import { SettingsTabButton } from '../containers/settings/settingsTabButton'
 
@@ -58,7 +58,7 @@ export const TabsNavigator = createBottomTabNavigator({
             }
         },
         Settings: {
-            screen: SettingsStackNavigator,
+            screen: SettingsTabNavigator,
             options: {
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => <MaterialCommunityIcon name='cog' size={size} color={color} />,
