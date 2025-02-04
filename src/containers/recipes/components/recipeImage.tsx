@@ -102,25 +102,6 @@ export function RecipeImage({ recipeId }: RecipeImageProps) {
     )
 }
 
-// <div className='relative mt-4 h-44 max-w-[450px]'>
-//     <img className='h-full w-full object-cover rounded-md' src={image_url || ''} alt={name} />
-//     <Dropdown
-//         dropdownClassName='!absolute top-3 right-3 h-8 w-8'
-//         menuButtonClassName='bg-white w-full h-full flex justify-center items-center rounded-full'
-//         menuButton={<EllipsisHorizontalIcon className='size-6' style={{ transform: 'scale(400%)' }} />}
-//         menuItems={[
-//             <Dropdown.MenuItem.Link key='1' to={`/recipes/edit/${id}/upload-image`}>
-//                 <CloudArrowUpIcon className='size-4 text-primary' />
-//                 Upload new
-//             </Dropdown.MenuItem.Link>,
-//             <Dropdown.MenuItem.Link key='2' to={`/recipes/edit/${id}/remove-image`}>
-//                 <TrashIcon className='size-4 text-primary' />
-//                 Remove
-//             </Dropdown.MenuItem.Link>
-//         ]}
-//     />
-// </div>
-
 const styles = StyleSheet.create({
     uploadImageLink: {
         marginTop: 10
