@@ -8,6 +8,6 @@ hiding the splash with react-native-splash-screen doesn't seem to actually hide 
 
 Still todo:
 - Once have Mac, go through every installed library and follow the ios setup steps.
-- Recipe image upload feature
+- Test Recipe image upload feature
 - Accept recipe share request
 - Test "share recipe" with actual email sending

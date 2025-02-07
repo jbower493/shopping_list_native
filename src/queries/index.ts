@@ -1,6 +1,7 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import { categoriesQueryKey, useCreateCategoryMutation, useGetCategoriesQuery } from './categories'
 import { itemsQueryKey, useGetItemsQuery } from './items'
+import { listsQueryKey, useCreateListMutation, useDeleteListMutation, useGetSingleListQuery, useListsQuery } from './lists'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import { recipeCategoriesQueryKey, useCreateRecipeCategoryMutation, useRecipeCategoriesQuery } from './recipeCategories'
 import {
@@ -33,6 +34,21 @@ export const query = {
         },
         logout: {
             useMutation: useLogoutMutation
+        }
+    },
+    lists: {
+        all: {
+            useQuery: useListsQuery,
+            queryKey: listsQueryKey
+        },
+        single: {
+            useQuery: useGetSingleListQuery,
+            delete: {
+                useMutation: useDeleteListMutation
+            }
+        },
+        create: {
+            useMutation: useCreateListMutation
         }
     },
     recipes: {
