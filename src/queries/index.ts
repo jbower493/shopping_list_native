@@ -1,7 +1,17 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import { categoriesQueryKey, useCreateCategoryMutation, useGetCategoriesQuery } from './categories'
-import { itemsQueryKey, useGetItemsQuery } from './items'
-import { listsQueryKey, useAddItemToListMutation, useCreateListMutation, useDeleteListMutation, useGetSingleListQuery, useListsQuery } from './lists'
+import { itemsQueryKey, useGetItemsQuery, useUploadItemImageMutation } from './items'
+import {
+    listsQueryKey,
+    singleListQueryKey,
+    useAddItemToListMutation,
+    useCreateListMutation,
+    useDeleteListMutation,
+    useGetSingleListQuery,
+    useListsQuery,
+    useRemoveItemFromListMutation,
+    useUpdateListItemQuantityMutation
+} from './lists'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import { recipeCategoriesQueryKey, useCreateRecipeCategoryMutation, useRecipeCategoriesQuery } from './recipeCategories'
 import {
@@ -43,11 +53,18 @@ export const query = {
         },
         single: {
             useQuery: useGetSingleListQuery,
+            queryKey: singleListQueryKey,
             delete: {
                 useMutation: useDeleteListMutation
             },
             addItem: {
                 useMutation: useAddItemToListMutation
+            },
+            removeItem: {
+                useMutation: useRemoveItemFromListMutation
+            },
+            itemQuantity: {
+                useMutation: useUpdateListItemQuantityMutation
             }
         },
         create: {
@@ -112,6 +129,11 @@ export const query = {
         all: {
             useQuery: useGetItemsQuery,
             queryKey: itemsQueryKey
+        },
+        single: {
+            uploadImage: {
+                useMutation: useUploadItemImageMutation
+            }
         }
     },
     itemCategories: {

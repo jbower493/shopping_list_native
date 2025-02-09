@@ -11,6 +11,7 @@ import { AddItemToListPayload } from '../../../queries/lists/types'
 import { Button } from '../../../components/Button'
 import { getExistingCategories } from '../../../utils/functions'
 import { CategoryTag } from '../../../components/CategoryTag'
+import { EditListItem } from '../components/editListItem'
 
 export function SingleListScreen() {
     const route = useRoute<RouteProp<ListsStackParamsList, 'SingleList'>>()
@@ -56,11 +57,7 @@ export function SingleListScreen() {
                         ) : null}
                     </View>
                     {itemsList.map((item) => (
-                        <View style={styles.list} key={item.id}>
-                            <Text>{item.name}</Text>
-
-                            {/* <RemoveItem itemId={item.id} recipeName={item.name} /> */}
-                        </View>
+                        <EditListItem key={item.id} item={item} listId={listId} />
                     ))}
                 </View>
             )
@@ -157,13 +154,6 @@ const styles = StyleSheet.create({
     },
     category: {
         marginBottom: 22
-    },
-    list: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginTop: 7
     },
     currentItems: {
         marginTop: 15,
