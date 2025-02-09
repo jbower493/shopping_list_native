@@ -6,7 +6,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { semantic } from '../../../designTokens'
 import { Input } from '../../../components/Form/Input'
 import { Picker } from '../../../components/Form/Picker'
-import { ComboBox } from '../../../components/Form/Combobox'
+import { ComboBox } from '../../../components/Form/ComboBox'
 import { NewItemCategoryForm } from './newItemCategoryForm'
 
 interface AddItemProps {

@@ -4,7 +4,7 @@ import { query } from '../../../queries'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import { Link } from '../../../components/Link'
 import { useNavigation } from '@react-navigation/native'
-import { semantic } from '../../../designTokens'
+import { component, semantic } from '../../../designTokens'
 import { DeleteList } from '../components/deleteList'
 import { NewList } from '../components/newList'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -40,7 +40,7 @@ export function ListsScreen() {
                                 <Text>{list.name}</Text>
                             </Link>
                             <View style={styles.actions}>
-                                <Pressable onPress={() => {}}>
+                                <Pressable onPress={() => navigation.navigate('Shop', { listId: list.id })}>
                                     <MaterialCommunityIcon name='cart-variant' size={22} color={semantic.colorTextPrimary} />
                                 </Pressable>
                                 <DeleteList listId={list.id} listName={list.name} />
@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 10
+        gap: component.actions_gapDefault
     }
 })

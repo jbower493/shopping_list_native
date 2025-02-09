@@ -321,36 +321,48 @@ export function useRemoveItemFromListMutation() {
 /***** Add items from recipe *****/
 export function useAddItemsFromRecipeMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const addItemsFromRecipe = ({ listId, recipeId }: { listId: string; recipeId: string }): Promise<MutationResponse> =>
         axiosInstance.post(`/api/list/${listId}/add-from-recipe/${recipeId}`)
 
     return useMutation({
-        mutationFn: addItemsFromRecipe
+        mutationFn: addItemsFromRecipe,
+        onSuccess: (res, variables) => {
+            queryClient.resetQueries({ queryKey: singleListQueryKey(variables.listId) })
+        }
     })
 }
 
 /***** Add items from menu *****/
 export function useAddItemsFromMenuMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const addItemsFromMenu = ({ listId, menuId }: { listId: string; menuId: string }): Promise<MutationResponse> =>
         axiosInstance.post(`/api/list/${listId}/add-from-menu/${menuId}`)
 
     return useMutation({
-        mutationFn: addItemsFromMenu
+        mutationFn: addItemsFromMenu,
+        onSuccess: (res, variables) => {
+            queryClient.resetQueries({ queryKey: singleListQueryKey(variables.listId) })
+        }
     })
 }
 
 /***** Edit list *****/
 export function useEditListMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const editList = ({ listId, attributes }: { listId: string; attributes: EditListPayload }): Promise<MutationResponse> =>
         axiosInstance.put(`/api/list/${listId}`, attributes)
 
     return useMutation({
-        mutationFn: editList
+        mutationFn: editList,
+        onSuccess: (res, variables) => {
+            queryClient.invalidateQueries({ queryKey: singleListQueryKey(variables.listId) })
+        }
     })
 }
 

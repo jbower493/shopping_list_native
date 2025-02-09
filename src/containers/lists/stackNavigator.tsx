@@ -6,6 +6,7 @@ import { Button } from 'react-native'
 import { query } from '../../queries'
 import { deleteToken } from '../../queries/utils/tokenStorage'
 import { useQueryClient } from '@tanstack/react-query'
+import { ShopScreen } from './screens/shop'
 
 function HeaderRightComponent(props: NativeStackHeaderRightProps) {
     const queryClient = useQueryClient()
@@ -32,6 +33,7 @@ function HeaderRightComponent(props: NativeStackHeaderRightProps) {
 export type ListsStackParamsList = {
     ListsHome: undefined
     SingleList: { listId: number }
+    Shop: { listId: number }
 }
 
 export const ListsStackNavigator = createNativeStackNavigator<ListsStackParamsList>({
@@ -54,6 +56,13 @@ export const ListsStackNavigator = createNativeStackNavigator<ListsStackParamsLi
             options: {
                 headerShown: true,
                 title: 'Single List'
+            }
+        },
+        Shop: {
+            screen: ShopScreen,
+            options: {
+                headerShown: true,
+                title: 'Shop'
             }
         }
     }

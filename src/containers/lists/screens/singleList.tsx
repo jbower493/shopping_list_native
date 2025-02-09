@@ -1,19 +1,23 @@
 import React from 'react'
 import { View, Text, StyleSheet, Pressable, FlatList } from 'react-native'
 import { ListsStackParamsList } from '../stackNavigator'
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { query } from '../../../queries'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
 import { AddItem } from '../../recipes/components/addItem'
 import { AddItemToListPayload } from '../../../queries/lists/types'
-import { Button } from '../../../components/Button'
 import { getExistingCategories } from '../../../utils/functions'
 import { CategoryTag } from '../../../components/CategoryTag'
 import { EditListItem } from '../components/editListItem'
+import { AddFromRecipe } from '../components/addFromRecipe'
+import { AddFromMenu } from '../components/addFromMenu'
+import { EditList } from '../components/editList'
 
 export function SingleListScreen() {
+    const navigation = useNavigation()
+
     const route = useRoute<RouteProp<ListsStackParamsList, 'SingleList'>>()
     const { listId } = route.params
 
@@ -77,11 +81,9 @@ export function SingleListScreen() {
             <View style={styles.topContainer}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{name}</Text>
-                    <Pressable style={styles.titleEditButton} onPress={() => {}}>
-                        <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
-                    </Pressable>
+                    <EditList listId={listId} listName={singleListData.name} />
                 </View>
-                <Pressable onPress={() => {}}>
+                <Pressable onPress={() => navigation.navigate('Shop', { listId: listId })}>
                     <MaterialCommunityIcon name='cart-variant' size={22} color={semantic.colorTextPrimary} />
                 </Pressable>
             </View>
@@ -106,8 +108,8 @@ export function SingleListScreen() {
             />
 
             <View style={styles.addFromContainer}>
-                <Button onPress={() => {}}>Add From Recipe</Button>
-                <Button onPress={() => {}}>Add From Menu</Button>
+                <AddFromRecipe listId={listId} />
+                <AddFromMenu listId={listId} />
             </View>
 
             <View style={styles.currentItems}>
@@ -139,9 +141,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 600
-    },
-    titleEditButton: {
-        marginTop: 3
     },
     addFromContainer: {
         flexDirection: 'row',

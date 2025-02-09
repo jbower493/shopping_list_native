@@ -13,7 +13,9 @@ const primitive = {
     borderRadius5: 5,
     borderRadius10: 10,
 
-    padding15: 15
+    padding15: 15,
+
+    gap15: 15
 }
 
 export const semantic = {
@@ -40,5 +42,6 @@ export const semantic = {
 
 export const component = {
     ModalFooter_colorBackground: primitive.colorGray100,
-    Button_colorBackgroundDisabled: primitive.colorGray400
+    Button_colorBackgroundDisabled: primitive.colorGray400,
+    actions_gapDefault: primitive.gap15
 }

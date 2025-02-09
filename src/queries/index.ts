@@ -4,14 +4,18 @@ import { itemsQueryKey, useGetItemsQuery, useUploadItemImageMutation } from './i
 import {
     listsQueryKey,
     singleListQueryKey,
+    useAddItemsFromMenuMutation,
+    useAddItemsFromRecipeMutation,
     useAddItemToListMutation,
     useCreateListMutation,
     useDeleteListMutation,
+    useEditListMutation,
     useGetSingleListQuery,
     useListsQuery,
     useRemoveItemFromListMutation,
     useUpdateListItemQuantityMutation
 } from './lists'
+import { menusQueryKey, useGetMenusQuery } from './menus'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import { recipeCategoriesQueryKey, useCreateRecipeCategoryMutation, useRecipeCategoriesQuery } from './recipeCategories'
 import {
@@ -46,6 +50,12 @@ export const query = {
             useMutation: useLogoutMutation
         }
     },
+    menus: {
+        all: {
+            useQuery: useGetMenusQuery,
+            queryKey: menusQueryKey
+        }
+    },
     lists: {
         all: {
             useQuery: useListsQuery,
@@ -65,6 +75,15 @@ export const query = {
             },
             itemQuantity: {
                 useMutation: useUpdateListItemQuantityMutation
+            },
+            addFromRecipe: {
+                useMutation: useAddItemsFromRecipeMutation
+            },
+            addFromMenu: {
+                useMutation: useAddItemsFromMenuMutation
+            },
+            update: {
+                useMutation: useEditListMutation
             }
         },
         create: {

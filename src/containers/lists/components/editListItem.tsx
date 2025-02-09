@@ -1,7 +1,7 @@
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { ItemWithQuantity } from '../../../components/ItemWithQuantity'
-import { semantic } from '../../../designTokens'
+import { component, semantic } from '../../../designTokens'
 import { query } from '../../../queries'
 import { ListItem } from '../../../queries/lists/types'
 import { UpdateListItem } from './updateListItem'
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     },
     buttonsContainer: {
         flexDirection: 'row',
-        gap: 15,
+        gap: component.actions_gapDefault,
         alignItems: 'center'
     }
 })

@@ -91,3 +91,25 @@ export function formatPrepTime(time: number | null) {
 
     return `${hrs} ${hrs === 1 ? 'hr' : 'hrs'} ${mins} mins`
 }
+
+export function getFilteredRecipesByCategory(selectedRecipeCategoryId: string | undefined, recipesData: Recipe[]) {
+    function filterFn({ recipe_category }: Recipe) {
+        if (selectedRecipeCategoryId === 'ALL_CATEGORIES') {
+            return true
+        }
+
+        if (recipe_category?.id === Number(selectedRecipeCategoryId)) {
+            return true
+        }
+
+        if (!recipe_category && selectedRecipeCategoryId === 'none') {
+            return true
+        }
+
+        return false
+    }
+
+    const list = (recipesData || []).filter(filterFn)
+
+    return list.map(({ name }) => name)
+}
