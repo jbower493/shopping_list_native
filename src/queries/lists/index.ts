@@ -4,7 +4,7 @@ import { MutationResponse, QueryResponse } from '../utils/types'
 import { AddItemToListPayload, DetailedList, EditListPayload, List, ListItem, NewList, UpdateListItemQuantityPayload } from './types'
 import { FetchContext } from '../utils/fetchContext'
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosResponse } from 'axios'
 import { categoriesQueryKey, getCategories } from '../categories'
 import { getItems, itemsQueryKey } from '../items'
 import { getQuantityUnits, quantityUnitsQueryKey } from '../quantityUnits'
@@ -88,15 +88,34 @@ export function useAddItemToListMutation() {
     const { axiosInstance } = useContext(FetchContext)
     const queryClient = useQueryClient()
 
-    const addItemToList = ({ listId, itemName, categoryId, quantity, quantityUnitId }: AddItemToListPayload): Promise<MutationResponse> => {
+    const addItemToList = async ({
+        listId,
+        itemName,
+        existingCategoryId,
+        newCategory,
+        quantity,
+        quantityUnitId
+    }: AddItemToListPayload): Promise<MutationResponse> => {
         const body: { item_name: string; category_id?: string; quantity: number; quantity_unit_id?: number } = {
             item_name: itemName,
             quantity
         }
 
-        if (categoryId) {
-            body.category_id = categoryId
+        if (newCategory) {
+            // If this errors we can just let it throw and the query will stop executing and return an error
+            const response = await axiosInstance.post<{ name: string }, AxiosResponse<{ category: { id: number } }>>('/api/category', {
+                name: newCategory
+            })
+
+            const newCategoryId = response.data.category.id
+
+            body.category_id = newCategoryId.toString()
         }
+
+        if (existingCategoryId) {
+            body.category_id = existingCategoryId
+        }
+
         if (quantityUnitId) {
             body.quantity_unit_id = quantityUnitId
         }
@@ -132,10 +151,19 @@ export function useAddItemToListMutation() {
                 const matchingItem = itemsQueryData?.data.items.find(({ name }) => name === payload.itemName)
 
                 const getAddedItemCategory = () => {
+                    // It its a new item and a new category, we don't have the id yet
+                    if (payload.newCategory) {
+                        return {
+                            // Can't be -1 otherwise it will show up as the "uncategorized" color after the optimistic update
+                            id: -2,
+                            name: payload.newCategory
+                        }
+                    }
+
                     function getCategoryId() {
                         // If its a new item and therefore it is getting assigned a category on creation
-                        if (payload.categoryId) {
-                            return Number(payload.categoryId)
+                        if (payload.existingCategoryId) {
+                            return Number(payload.existingCategoryId)
                         }
 
                         // If its an existing item, check the items list to see what it's category is (if it has a category)
@@ -188,21 +216,48 @@ export function useAddItemToListMutation() {
                 return newData
             })
 
+            if (payload.newCategory) {
+                queryClient.setQueryData(categoriesQueryKey(), (old: CategoriesQueryData) => {
+                    if (!old) {
+                        return undefined
+                    }
+
+                    const newData: CategoriesQueryData = {
+                        data: {
+                            categories: [
+                                ...old.data.categories,
+                                {
+                                    id: -1,
+                                    name: payload.newCategory || ''
+                                }
+                            ]
+                        },
+                        message: old.message
+                    }
+
+                    return newData
+                })
+            }
+
             // Return context object with the current data
             return {
-                singleListQueryData: singleListQueryData
+                singleListQueryData: singleListQueryData,
+                categoriesQueryData: categoriesQueryData
             }
         },
         onSuccess: (data, variables) => {
             // Invalidate affected queries on success
-            queryClient.invalidateQueries({
-                queryKey: singleListQueryKey(variables.listId)
-            })
+            queryClient.invalidateQueries({ queryKey: singleListQueryKey(variables.listId) })
             queryClient.invalidateQueries({ queryKey: itemsQueryKey() })
+
+            if (variables.newCategory) {
+                queryClient.invalidateQueries({ queryKey: categoriesQueryKey() })
+            }
         },
         onError: (err, variables, context) => {
             // Roll back to old data on error
             queryClient.setQueryData(singleListQueryKey(variables.listId), context?.singleListQueryData)
+            queryClient.setQueryData(categoriesQueryKey(), context?.categoriesQueryData)
         }
     })
 }

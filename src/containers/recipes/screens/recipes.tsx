@@ -50,7 +50,7 @@ export function RecipesScreen() {
             }
 
             // TODO: remove this once the recipes are being sorted already by the backend
-            recipeslist.sort()
+            recipeslist.sort((a, b) => (a.name > b.name ? 1 : -1))
 
             return (
                 <View style={styles.category} key={recipeCategoryId}>

@@ -19,9 +19,10 @@ export interface DetailedList {
 export interface AddItemToListPayload {
     listId: string
     itemName: string
-    categoryId?: string
     quantity: number
     quantityUnitId?: number
+    newCategory?: string
+    existingCategoryId?: string
 }
 
 export interface ListItem {

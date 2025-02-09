@@ -155,6 +155,7 @@ export function useAddItemToRecipeMutation() {
         if (existingCategoryId) {
             body.category_id = existingCategoryId
         }
+
         if (quantityUnitId) {
             body.quantity_unit_id = quantityUnitId
         }
@@ -191,7 +192,7 @@ export function useAddItemToRecipeMutation() {
                     // It its a new item and a new category, we don't have the id yet
                     if (payload.newCategory) {
                         return {
-                            id: -1,
+                            id: -2,
                             name: payload.newCategory
                         }
                     }
@@ -260,6 +261,10 @@ export function useAddItemToRecipeMutation() {
             // Invalidate affected queries on success
             queryClient.invalidateQueries({ queryKey: singleRecipeQueryKey(variables.recipeId) })
             queryClient.invalidateQueries({ queryKey: itemsQueryKey() })
+
+            if (variables.newCategory) {
+                queryClient.invalidateQueries({ queryKey: categoriesQueryKey() })
+            }
         },
         onError: (err, variables, context) => {
             // Roll back to old data on error

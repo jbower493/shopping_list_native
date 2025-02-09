@@ -29,7 +29,12 @@ function HeaderRightComponent(props: NativeStackHeaderRightProps) {
     )
 }
 
-export const ListsStackNavigator = createNativeStackNavigator({
+export type ListsStackParamsList = {
+    ListsHome: undefined
+    SingleList: { listId: number }
+}
+
+export const ListsStackNavigator = createNativeStackNavigator<ListsStackParamsList>({
     initialRouteName: 'ListsHome',
     screenOptions: {
         headerTintColor: semantic.colorTextPrimary

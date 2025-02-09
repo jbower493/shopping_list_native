@@ -37,6 +37,7 @@ export function NewItemCategoryForm({ onSubmitFunc, isOpen, close, itemName }: N
 
     const onSubmit: SubmitHandler<Inputs> = async ({ categoryId, newCategory }) => {
         onSubmitFunc(categoryId || null, newCategory || null)
+        methods.reset()
     }
 
     const renderForm = () => {
