@@ -1,5 +1,11 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
-import { categoriesQueryKey, useCreateCategoryMutation, useGetCategoriesQuery } from './categories'
+import {
+    categoriesQueryKey,
+    useCreateCategoryMutation,
+    useDeleteCategoryMutation,
+    useEditCategoryMutation,
+    useGetCategoriesQuery
+} from './categories'
 import {
     itemsQueryKey,
     useCreateItemMutation,
@@ -175,6 +181,14 @@ export const query = {
         all: {
             useQuery: useGetCategoriesQuery,
             queryKey: categoriesQueryKey
+        },
+        single: {
+            update: {
+                useMutation: useEditCategoryMutation
+            },
+            delete: {
+                useMutation: useDeleteCategoryMutation
+            }
         },
         create: {
             useMutation: useCreateCategoryMutation
