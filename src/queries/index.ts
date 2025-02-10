@@ -1,6 +1,13 @@
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import { categoriesQueryKey, useCreateCategoryMutation, useGetCategoriesQuery } from './categories'
-import { itemsQueryKey, useGetItemsQuery, useUploadItemImageMutation } from './items'
+import {
+    itemsQueryKey,
+    useCreateItemMutation,
+    useDeleteItemMutation,
+    useEditItemMutation,
+    useGetItemsQuery,
+    useUploadItemImageMutation
+} from './items'
 import {
     listsQueryKey,
     singleListQueryKey,
@@ -152,7 +159,16 @@ export const query = {
         single: {
             uploadImage: {
                 useMutation: useUploadItemImageMutation
+            },
+            delete: {
+                useMutation: useDeleteItemMutation
+            },
+            update: {
+                useMutation: useEditItemMutation
             }
+        },
+        create: {
+            useMutation: useCreateItemMutation
         }
     },
     itemCategories: {

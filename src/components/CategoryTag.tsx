@@ -11,10 +11,18 @@ interface CategoryTagProps {
     className?: string
 }
 
-export function CategoryTag({ categoriesData, categoryName }: CategoryTagProps) {
+export function CategoryTag({ categoriesData, categoryName, size }: CategoryTagProps) {
     return (
         <View style={styles.container}>
-            <Text style={[styles.tag, { backgroundColor: getCategoryColor(categoriesData, categoryName) }]}>{categoryName}</Text>
+            <Text
+                style={[
+                    styles.tag,
+                    { backgroundColor: getCategoryColor(categoriesData, categoryName) },
+                    size === 'sm' ? { height: 20, fontSize: 12, paddingHorizontal: 8 } : null
+                ]}
+            >
+                {categoryName}
+            </Text>
         </View>
     )
 }

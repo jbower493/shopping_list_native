@@ -1,10 +1,12 @@
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, QueryClient, useQueryClient } from '@tanstack/react-query'
 import { QueryKeySet } from '../utils/keyFactory'
 import { MutationResponse, QueryResponse } from '../utils/types'
 import { EditItemPayload, Item, NewItem } from './types'
 import { AxiosInstance } from 'axios'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
+import { listsQueryKey } from '../lists'
+import { recipesQueryKey } from '../recipes'
 
 const itemsKeySet = new QueryKeySet('Item')
 
@@ -29,34 +31,48 @@ export function prefetchGetItemsQuery(queryClient: QueryClient, axiosInstance: A
 /***** Create item *****/
 export function useCreateItemMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const createItem = (newItem: NewItem): Promise<MutationResponse> => axiosInstance.post('/api/item', newItem)
 
     return useMutation({
-        mutationFn: createItem
+        mutationFn: createItem,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: itemsQueryKey() })
+        }
     })
 }
 
 /***** Delete item *****/
 export function useDeleteItemMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const deleteItem = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/item/${id}`)
 
     return useMutation({
-        mutationFn: deleteItem
+        mutationFn: deleteItem,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: itemsQueryKey() })
+        }
     })
 }
 
 /***** Edit item *****/
 export function useEditItemMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const editItem = ({ itemId, attributes }: { itemId: string; attributes: EditItemPayload }): Promise<MutationResponse> =>
         axiosInstance.put(`/api/item/${itemId}`, attributes)
 
     return useMutation({
-        mutationFn: editItem
+        mutationFn: editItem,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+            queryClient.invalidateQueries({ queryKey: listsQueryKey() })
+            queryClient.invalidateQueries({ queryKey: itemsQueryKey() })
+        }
     })
 }
 
