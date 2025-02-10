@@ -30,7 +30,13 @@ import {
 } from './lists'
 import { menusQueryKey, useGetMenusQuery } from './menus'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
-import { recipeCategoriesQueryKey, useCreateRecipeCategoryMutation, useRecipeCategoriesQuery } from './recipeCategories'
+import {
+    recipeCategoriesQueryKey,
+    useCreateRecipeCategoryMutation,
+    useDeleteRecipeCategoryMutation,
+    useEditRecipeCategoryMutation,
+    useRecipeCategoriesQuery
+} from './recipeCategories'
 import {
     recipesQueryKey,
     useAddItemToRecipeMutation,
@@ -146,6 +152,14 @@ export const query = {
         all: {
             useQuery: useRecipeCategoriesQuery,
             queryKey: recipeCategoriesQueryKey
+        },
+        single: {
+            update: {
+                useMutation: useEditRecipeCategoryMutation
+            },
+            delete: {
+                useMutation: useDeleteRecipeCategoryMutation
+            }
         },
         create: {
             useMutation: useCreateRecipeCategoryMutation

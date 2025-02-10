@@ -5,6 +5,7 @@ import type { MutationResponse, QueryResponse } from '../utils/types'
 import { useContext } from 'react'
 import { FetchContext } from '../utils/fetchContext'
 import { AxiosInstance } from 'axios'
+import { recipesQueryKey } from '../recipes'
 
 const recipeCategoriesKeySet = new QueryKeySet('RecipeCategory')
 
@@ -46,17 +47,23 @@ export function useCreateRecipeCategoryMutation() {
 /***** Delete recipe category *****/
 export function useDeleteRecipeCategoryMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const deleteRecipeCategory = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/recipe-category/${id}`)
 
     return useMutation({
-        mutationFn: deleteRecipeCategory
+        mutationFn: deleteRecipeCategory,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: recipeCategoriesQueryKey() })
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+        }
     })
 }
 
 /***** Edit recipe category *****/
 export function useEditRecipeCategoryMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const editRecipeCategory = ({
         recipeCategoryId,
@@ -67,6 +74,10 @@ export function useEditRecipeCategoryMutation() {
     }): Promise<MutationResponse> => axiosInstance.put(`/api/recipe-category/${recipeCategoryId}`, attributes)
 
     return useMutation({
-        mutationFn: editRecipeCategory
+        mutationFn: editRecipeCategory,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: recipeCategoriesQueryKey() })
+            queryClient.invalidateQueries({ queryKey: recipesQueryKey() })
+        }
     })
 }

@@ -11,10 +11,10 @@ import { flashMessage } from '../../../utils/flashMessage'
 import * as z from 'zod'
 import { query } from '../../../queries'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Category } from '../../../queries/categories/types'
+import { RecipeCategory } from '../../../queries/recipeCategories/types'
 
-type EditItemCategoryProps = {
-    category: Category
+type EditRecipeCategoryProps = {
+    recipeCategory: RecipeCategory
 }
 
 type Inputs = {
@@ -25,16 +25,16 @@ const schema = z.object({
     name: z.string().min(1, 'Required')
 })
 
-export function EditItemCategory({ category }: EditItemCategoryProps) {
+export function EditRecipeCategory({ recipeCategory }: EditRecipeCategoryProps) {
     const [isOpen, setIsOpen] = useState(false)
 
-    const { mutateAsync: editCategory } = query.itemCategories.single.update.useMutation()
+    const { mutateAsync: editRecipeCategory } = query.recipeCategories.single.update.useMutation()
 
     const methods = useForm<Inputs>({
         mode: 'all',
         resolver: zodResolver(schema),
         defaultValues: {
-            name: category.name
+            name: recipeCategory.name
         }
     })
 
@@ -44,9 +44,9 @@ export function EditItemCategory({ category }: EditItemCategoryProps) {
     } = methods
 
     const onSubmit: SubmitHandler<Inputs> = async ({ name }) => {
-        await editCategory(
+        await editRecipeCategory(
             {
-                categoryId: category.id.toString(),
+                recipeCategoryId: recipeCategory.id.toString(),
                 attributes: {
                     name
                 }
@@ -68,7 +68,7 @@ export function EditItemCategory({ category }: EditItemCategoryProps) {
             <Pressable onPress={() => setIsOpen(true)}>
                 <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
             </Pressable>
-            <Modal isOpen={isOpen} close={() => setIsOpen(false)} title='Edit Category' description={category.name}>
+            <Modal isOpen={isOpen} close={() => setIsOpen(false)} title='Edit Recipe Category' description={recipeCategory.name}>
                 <View>
                     <Modal.Body>
                         <FormProvider {...methods}>
