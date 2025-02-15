@@ -1,4 +1,4 @@
-import { useChangeEmailMutation } from './account'
+import { useChangeEmailMutation, useChangePasswordMutation } from './account'
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import {
     categoriesQueryKey,
@@ -73,6 +73,9 @@ export const query = {
     account: {
         changeEmail: {
             useMutation: useChangeEmailMutation
+        },
+        changePassword: {
+            useMutation: useChangePasswordMutation
         }
     },
     menus: {
