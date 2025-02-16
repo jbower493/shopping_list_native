@@ -12,3 +12,4 @@ Still todo:
 - Test Item image upload feature (on single list page)
 - Accept recipe share request
 - Test "share recipe" with actual email sending
+- Make login as another user work for app (backend auth thing)

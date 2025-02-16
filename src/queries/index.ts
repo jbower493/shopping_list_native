@@ -1,9 +1,12 @@
 import {
+    accountAccessQueryKey,
     additionalUsersQueryKey,
+    useAccountAccessQuery,
     useAddAdditionalUserMutation,
     useAdditionalUsersQuery,
     useChangeEmailMutation,
     useChangePasswordMutation,
+    useLoginAsAnotherUserMutation,
     useRemoveAdditionalUserMutation
 } from './account'
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
@@ -94,6 +97,15 @@ export const query = {
             },
             delete: {
                 useMutation: useRemoveAdditionalUserMutation
+            }
+        },
+        accountAccess: {
+            all: {
+                useQuery: useAccountAccessQuery,
+                queryKey: accountAccessQueryKey
+            },
+            loginAsAnotherUser: {
+                useMutation: useLoginAsAnotherUserMutation
             }
         }
     },
