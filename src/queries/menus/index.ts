@@ -47,6 +47,7 @@ export function useCreateMenuMutation() {
     return useMutation({
         mutationFn: createMenu,
         onSuccess(res) {
+            queryClient.invalidateQueries({ queryKey: menusQueryKey() })
             prefetchSingleMenuQuery(res.data?.menu_id.toString() || '', queryClient, axiosInstance)
         }
     })
@@ -55,11 +56,15 @@ export function useCreateMenuMutation() {
 /***** Delete menu *****/
 export function useDeleteMenuMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const deleteMenu = (id: string): Promise<MutationResponse> => axiosInstance.delete(`/api/menu/${id}`)
 
     return useMutation({
-        mutationFn: deleteMenu
+        mutationFn: deleteMenu,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: menusQueryKey() })
+        }
     })
 }
 
