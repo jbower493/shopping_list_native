@@ -43,24 +43,32 @@ export function useAccountAccessQuery() {
 /***** Add additional user *****/
 export function useAddAdditionalUserMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const addAdditionalUser = ({ additional_user_email }: { additional_user_email: string }): Promise<MutationResponse> =>
         axiosInstance.post('/api/user/additional-user', { additional_user_email })
 
     return useMutation({
-        mutationFn: addAdditionalUser
+        mutationFn: addAdditionalUser,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: additionalUsersQueryKey() })
+        }
     })
 }
 
 /***** Remove additional user *****/
 export function useRemoveAdditionalUserMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const removeAdditionalUser = ({ additional_user_email }: { additional_user_email: string }): Promise<MutationResponse> =>
         axiosInstance.post('/api/user/additional-user/remove', { additional_user_email })
 
     return useMutation({
-        mutationFn: removeAdditionalUser
+        mutationFn: removeAdditionalUser,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: additionalUsersQueryKey() })
+        }
     })
 }
 

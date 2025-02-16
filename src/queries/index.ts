@@ -1,4 +1,11 @@
-import { useChangeEmailMutation, useChangePasswordMutation } from './account'
+import {
+    additionalUsersQueryKey,
+    useAddAdditionalUserMutation,
+    useAdditionalUsersQuery,
+    useChangeEmailMutation,
+    useChangePasswordMutation,
+    useRemoveAdditionalUserMutation
+} from './account'
 import { useLoginMutation, useLogoutMutation, useRegisterMutation, userQueryKey, useUserQuery } from './auth'
 import {
     categoriesQueryKey,
@@ -76,6 +83,18 @@ export const query = {
         },
         changePassword: {
             useMutation: useChangePasswordMutation
+        },
+        additionalUsers: {
+            all: {
+                useQuery: useAdditionalUsersQuery,
+                queryKey: additionalUsersQueryKey
+            },
+            create: {
+                useMutation: useAddAdditionalUserMutation
+            },
+            delete: {
+                useMutation: useRemoveAdditionalUserMutation
+            }
         }
     },
     menus: {
