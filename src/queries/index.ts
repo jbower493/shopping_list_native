@@ -6,6 +6,7 @@ import {
     useAdditionalUsersQuery,
     useChangeEmailMutation,
     useChangePasswordMutation,
+    useDeleteAccountMutation,
     useLoginAsAnotherUserMutation,
     useRemoveAdditionalUserMutation
 } from './account'
@@ -107,6 +108,9 @@ export const query = {
             loginAsAnotherUser: {
                 useMutation: useLoginAsAnotherUserMutation
             }
+        },
+        deleteAccount: {
+            useMutation: useDeleteAccountMutation
         }
     },
     menus: {

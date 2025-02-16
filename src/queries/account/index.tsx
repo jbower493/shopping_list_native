@@ -119,10 +119,14 @@ export function useChangePasswordMutation() {
 /***** Delete account *****/
 export function useDeleteAccountMutation() {
     const { axiosInstance } = useContext(FetchContext)
+    const queryClient = useQueryClient()
 
     const deleteAccount = ({ userId }: { userId: string }): Promise<MutationResponse> => axiosInstance.delete(`/api/user/${userId}`)
 
     return useMutation({
-        mutationFn: deleteAccount
+        mutationFn: deleteAccount,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: userQueryKey })
+        }
     })
 }

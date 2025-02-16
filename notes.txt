@@ -13,3 +13,4 @@ Still todo:
 - Accept recipe share request
 - Test "share recipe" with actual email sending
 - Make login as another user work for app (backend auth thing)
+- Make delete account work for app (backend auth thing)
