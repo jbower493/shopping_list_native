@@ -40,7 +40,16 @@ import {
     useRemoveItemFromListMutation,
     useUpdateListItemQuantityMutation
 } from './lists'
-import { menusQueryKey, singleMenuQueryKey, useCreateMenuMutation, useDeleteMenuMutation, useGetMenusQuery, useGetSingleMenuQuery } from './menus'
+import {
+    menusQueryKey,
+    singleMenuQueryKey,
+    useAddRecipesToMenuMutation,
+    useCreateMenuMutation,
+    useDeleteMenuMutation,
+    useGetMenusQuery,
+    useGetSingleMenuQuery,
+    useRemoveRecipeFromMenuMutation
+} from './menus'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import {
     recipeCategoriesQueryKey,
@@ -123,6 +132,12 @@ export const query = {
             queryKey: singleMenuQueryKey,
             delete: {
                 useMutation: useDeleteMenuMutation
+            },
+            addRecipes: {
+                useMutation: useAddRecipesToMenuMutation
+            },
+            removeRecipe: {
+                useMutation: useRemoveRecipeFromMenuMutation
             }
         },
         create: {

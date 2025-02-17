@@ -94,6 +94,7 @@ export function AddFromRecipe({ listId }: AddFromRecipeProps) {
                             <ComboBox.HookForm
                                 label='Recipe'
                                 name='recipeName'
+                                placeholder='Recipe name'
                                 options={getFilteredRecipesByCategory(selectedRecipeCategoryId, recipesData || [])}
                             />
                         </FormRow>
