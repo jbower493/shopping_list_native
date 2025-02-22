@@ -48,7 +48,8 @@ import {
     useDeleteMenuMutation,
     useGetMenusQuery,
     useGetSingleMenuQuery,
-    useRemoveRecipeFromMenuMutation
+    useRemoveRecipeFromMenuMutation,
+    useUpdateMenuRecipeMutation
 } from './menus'
 import { quantityUnitsQueryKey, useQuantityUnitsQuery } from './quantityUnits'
 import {
@@ -138,6 +139,9 @@ export const query = {
             },
             removeRecipe: {
                 useMutation: useRemoveRecipeFromMenuMutation
+            },
+            updateRecipe: {
+                useMutation: useUpdateMenuRecipeMutation
             }
         },
         create: {
