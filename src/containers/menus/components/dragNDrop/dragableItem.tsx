@@ -10,7 +10,7 @@ export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop
 
     const animatedStyles = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: offset.value.x }, { translateY: offset.value.y }, { scale: withSpring(isPressed.value ? 1.3 : 1) }]
+            transform: [{ translateX: offset.value.x }, { translateY: offset.value.y }, { scale: withSpring(isPressed.value ? 1.2 : 1) }]
         }
     })
 
@@ -25,15 +25,8 @@ export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop
                 y: e.translationY + start.value.y
             }
         })
-        .onEnd((e) => {
-            offset.value = {
-                x: 0,
-                y: 0
-            }
-
+        .onFinalize((e) => {
             onDrop(e.absoluteX, e.absoluteY)
-        })
-        .onFinalize(() => {
             isPressed.value = false
         })
         .runOnJS(true)
