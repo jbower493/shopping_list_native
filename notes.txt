@@ -15,3 +15,8 @@ Still todo:
 - Test "share recipe" with actual email sending
 - Make login as another user work for app (backend auth thing)
 - Make delete account work for app (backend auth thing)
+
+
+Bugs:
+- Drag and drop doesn't work properly
+- Combobox, can't press the list while the input is focused, but list closes when input is blurred.

@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
-type OnDrop = (finalX: number, finalY: number) => void
+type OnDrop = (finalX: number, finalY: number) => boolean
 
 export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop: OnDrop }) {
     const isPressed = useSharedValue(false)
@@ -26,7 +26,15 @@ export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop
             }
         })
         .onFinalize((e) => {
-            onDrop(e.absoluteX, e.absoluteY)
+            const isDropTargetHit = onDrop(e.absoluteX, e.absoluteY)
+
+            if (!isDropTargetHit) {
+                offset.value = {
+                    x: 0,
+                    y: 0
+                }
+            }
+
             isPressed.value = false
         })
         .runOnJS(true)

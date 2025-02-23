@@ -46,12 +46,15 @@ export function SingleMenuScreen() {
         removeRecipeFromMenu({ menuId: menuId.toString(), recipeId })
     }
 
+    /**
+     * Function to call when a draggable item is released. Returns boolean to indicate whether or not a valid drop target was hit
+     */
     function onDrop(finalX: number, finalY: number, recipeId: Recipe['id']) {
         const dropTarget = getDropTarget(finalX, finalY)
 
         // If there is no drop target then don't do anything
         if (!dropTarget) {
-            return
+            return false
         }
 
         // If there is a drop target but it's not one of the day options, then it must be the "no day assigned" drop target, so we'll send null to the backend.
@@ -64,6 +67,8 @@ export function SingleMenuScreen() {
                 day: date
             }
         })
+
+        return true
     }
 
     return (
