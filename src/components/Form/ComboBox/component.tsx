@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { View, FlatList, Text, StyleSheet, TextInput, NativeSyntheticEvent, Pressable } from 'react-native'
+import { View, Text, StyleSheet, TextInput, NativeSyntheticEvent, Pressable, ScrollView } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Input } from '../Input'
 import { semantic } from '../../../designTokens'
@@ -62,22 +62,21 @@ export function _ComboBox({ label, value, setValue, options, placeholder, onBlur
                     </Pressable>
                 ) : null}
                 {showDropdown && filtered.length > 0 && (
-                    <FlatList
-                        data={filtered}
-                        keyExtractor={(item) => item}
-                        style={styles.dropdown}
-                        keyboardShouldPersistTaps='handled'
-                        renderItem={({ item }) => (
-                            <Pressable
-                                onPress={() => {
-                                    handleSelect(item)
-                                }}
-                                style={styles.item}
-                            >
-                                <Text>{item}</Text>
-                            </Pressable>
-                        )}
-                    />
+                    <ScrollView style={styles.dropdown} keyboardShouldPersistTaps='handled'>
+                        {filtered.map((item) => {
+                            return (
+                                <Pressable
+                                    key={item}
+                                    onPress={() => {
+                                        handleSelect(item)
+                                    }}
+                                    style={styles.item}
+                                >
+                                    <Text>{item}</Text>
+                                </Pressable>
+                            )
+                        })}
+                    </ScrollView>
                 )}
             </View>
         </View>
