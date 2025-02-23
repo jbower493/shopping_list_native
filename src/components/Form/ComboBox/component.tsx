@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { View, FlatList, TouchableOpacity, Text, StyleSheet, TextInput, NativeSyntheticEvent } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { View, FlatList, Text, StyleSheet, TextInput, NativeSyntheticEvent, Pressable } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Input } from '../Input'
 import { semantic } from '../../../designTokens'
@@ -24,18 +24,16 @@ export function _ComboBox({ label, value, setValue, options, placeholder, onBlur
 
     const handleSearch = (text: string) => {
         setValue(text)
+        if (text && !showDropdown) {
+            setShowDropdown(true)
+        }
     }
 
     const handleSelect = (item: string) => {
         setValue(item)
         setShowDropdown(false)
+        inputRef.current?.blur()
     }
-
-    useEffect(() => {
-        if (!value && showDropdown) {
-            setShowDropdown(false)
-        }
-    }, [value])
 
     return (
         <View>
@@ -54,25 +52,30 @@ export function _ComboBox({ label, value, setValue, options, placeholder, onBlur
                     }}
                 />
                 {value ? (
-                    <TouchableOpacity
+                    <Pressable
                         onPress={() => {
                             handleSelect('')
-                            inputRef.current?.blur()
                         }}
                         style={styles.clear}
                     >
                         <MaterialCommunityIcon name='close-circle' size={20} color={semantic.colorTextInfo} />
-                    </TouchableOpacity>
+                    </Pressable>
                 ) : null}
                 {showDropdown && filtered.length > 0 && (
                     <FlatList
                         data={filtered}
                         keyExtractor={(item) => item}
                         style={styles.dropdown}
+                        keyboardShouldPersistTaps='handled'
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => handleSelect(item)} style={styles.item}>
+                            <Pressable
+                                onPress={() => {
+                                    handleSelect(item)
+                                }}
+                                style={styles.item}
+                            >
                                 <Text>{item}</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                         )}
                     />
                 )}
