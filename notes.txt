@@ -20,4 +20,3 @@ Still todo:
 Bugs:
 - Drag and drop doesn't work properly
 - Can't add "Salmon" when "salmon" is already added
-- Can't see input when focused when input is on bottom half of page. Causes issue with combobox where you can't see the. Does every page have to be a scrollview? Or does the input always have to be in the top half of the page?

@@ -13,6 +13,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useDropzones } from '../components/dragNDrop/useDropzones'
 import { DragableItem } from '../components/dragNDrop/dragableItem'
 import { Recipe } from '../../../queries/recipes/types'
+import { useState } from 'react'
+import { DropTarget } from '../components/dragNDrop/dropTarget'
 
 const dayOptions = getDayOptions()
 
@@ -21,6 +23,7 @@ export function SingleMenuScreen() {
     const { menuId } = route.params
 
     const { registerDropzone, getDropTarget } = useDropzones()
+    const [isRecipeBeingDragged, setIsRecipeBeingDragged] = useState(false)
 
     const { data: singleMenuData, isPending: isSingleMenuPending, isError: isSingleMenuError } = query.menus.single.useQuery(menuId.toString())
     const { data: recipesData, isFetching: isRecipesFetching, isError: isRecipesError } = query.recipes.all.useQuery()
@@ -87,15 +90,18 @@ export function SingleMenuScreen() {
                 <Text style={styles.introText}>Drag and drop recipes to change the day.</Text>
                 <View style={styles.mainView}>
                     <View style={styles.day}>
-                        <View onLayout={(e) => registerDropzone(e, 'NO_DAY_ASSIGNED')}>
+                        <DropTarget isOpen={isRecipeBeingDragged} register={(e) => registerDropzone(e, 'NO_DAY_ASSIGNED')}>
                             <Text style={styles.noDayTitle}>No Day Assigned</Text>
-                        </View>
+                        </DropTarget>
                         {[...recipes]
                             .filter(({ day_of_week }) => !dayOptions.map((dayOption) => dayOption.date).includes(day_of_week.day || ''))
                             .sort((a, b) => (a.name > b.name ? 1 : -1))
                             .map((recipe) => (
                                 <View style={styles.menuRecipe} key={recipe.id}>
-                                    <DragableItem onDrop={(finalX, finalY) => onDrop(finalX, finalY, recipe.id)}>
+                                    <DragableItem
+                                        onDrop={(finalX, finalY) => onDrop(finalX, finalY, recipe.id)}
+                                        setIsBeingDragged={(isBeingDragged) => setIsRecipeBeingDragged(isBeingDragged)}
+                                    >
                                         <Text>{recipe.name}</Text>
                                     </DragableItem>
                                     <View style={styles.actions}>
@@ -109,14 +115,19 @@ export function SingleMenuScreen() {
 
                     {dayOptions.map((dayOption) => {
                         return (
-                            <View key={dayOption.date} style={styles.day} onLayout={(e) => registerDropzone(e, dayOption.day)}>
-                                <Text style={styles.dayTitle}>{dayOption.day}</Text>
+                            <View key={dayOption.date} style={styles.day}>
+                                <DropTarget isOpen={isRecipeBeingDragged} register={(e) => registerDropzone(e, dayOption.day)}>
+                                    <Text style={styles.dayTitle}>{dayOption.day}</Text>
+                                </DropTarget>
                                 {[...recipes]
                                     .filter(({ day_of_week }) => day_of_week.day === dayOption.date)
                                     .sort((a, b) => (a.name > b.name ? 1 : -1))
                                     .map((recipe) => (
                                         <View style={styles.menuRecipe} key={recipe.id}>
-                                            <DragableItem onDrop={(finalX, finalY) => onDrop(finalX, finalY, recipe.id)}>
+                                            <DragableItem
+                                                onDrop={(finalX, finalY) => onDrop(finalX, finalY, recipe.id)}
+                                                setIsBeingDragged={(isBeingDragged) => setIsRecipeBeingDragged(isBeingDragged)}
+                                            >
                                                 <Text>{recipe.name}</Text>
                                             </DragableItem>
                                             <View style={styles.actions}>
@@ -177,7 +188,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
-        marginTop: 7,
+        marginBottom: 7,
         paddingLeft: 10
     },
     actions: {
@@ -187,17 +198,15 @@ const styles = StyleSheet.create({
         gap: component.actions_gapDefault
     },
     day: {
-        marginBottom: 25
+        marginBottom: 8
     },
     noDayTitle: {
         fontSize: 18,
-        fontWeight: 600,
-        marginBottom: 5
+        fontWeight: 600
     },
     dayTitle: {
         fontSize: 18,
         fontWeight: 600,
-        marginBottom: 5,
         color: semantic.colorTextPrimary
     }
 })

@@ -2,6 +2,7 @@ const primitive = {
     colorWhite: '#ffffff',
     colorBlack: '#000000',
     colorPrimary: '#10B981',
+    colorPrimary100: '#cdeae1',
     colorGray: '#d1d5db',
     colorGray100: '#f9fafb',
     colorGray200: '#f3f4f6',
@@ -43,5 +44,6 @@ export const semantic = {
 export const component = {
     ModalFooter_colorBackground: primitive.colorGray100,
     Button_colorBackgroundDisabled: primitive.colorGray400,
+    DropTarget_colorBackground: primitive.colorPrimary100,
     actions_gapDefault: primitive.gap15
 }

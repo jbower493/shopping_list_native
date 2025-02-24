@@ -3,10 +3,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
 type OnDrop = (finalX: number, finalY: number) => boolean
+type DragableItemProps = { children: ReactNode; onDrop: OnDrop; setIsBeingDragged: (newIsPressed: boolean) => void }
 
-export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop: OnDrop }) {
-    const isPressed = useSharedValue(false)
+export function DragableItem({ children, onDrop, setIsBeingDragged }: DragableItemProps) {
     const offset = useSharedValue({ x: 0, y: 0 })
+    const isPressed = useSharedValue(false)
 
     const animatedStyles = useAnimatedStyle(() => {
         return {
@@ -18,6 +19,7 @@ export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop
     const gesture = Gesture.Pan()
         .onBegin(() => {
             isPressed.value = true
+            setIsBeingDragged(true)
         })
         .onUpdate((e) => {
             offset.value = {
@@ -36,12 +38,13 @@ export function DragableItem({ children, onDrop }: { children: ReactNode; onDrop
             }
 
             isPressed.value = false
+            setIsBeingDragged(false)
         })
         .runOnJS(true)
 
     return (
         <GestureDetector gesture={gesture}>
-            <Animated.View style={animatedStyles}>{children}</Animated.View>
+            <Animated.View style={[animatedStyles, { zIndex: 1 }]}>{children}</Animated.View>
         </GestureDetector>
     )
 }
