@@ -81,36 +81,41 @@ export function AddFromRecipe({ listId }: AddFromRecipeProps) {
                 title='Add Items From Recipe'
                 description='Choose a recipe to add items from. This will add every item in your recipe to the current list.'
             >
-                <FormProvider {...methods}>
-                    <Modal.Body isLoading={isRecipesFetching || isRecipeCategoriesFetching} isError={isRecipesError}>
-                        <FormRow>
-                            <Picker.HookForm
-                                label='Recipe Category'
-                                name='recipeCategoryId'
-                                options={[{ label: 'All categories', value: 'ALL_CATEGORIES' }, ...getRecipeCategoryOptions(recipeCategoriesData)]}
-                            />
-                        </FormRow>
-                        <FormRow>
-                            <ComboBox.HookForm
-                                label='Recipe'
-                                name='recipeName'
-                                placeholder='Recipe name'
-                                options={getFilteredRecipesByCategory(selectedRecipeCategoryId, recipesData || [])}
-                            />
-                        </FormRow>
-                        <View style={{ height: 200 }} />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <View style={styles.modalFooter}>
-                            <Button color='secondary' onPress={() => setIsOpen(false)}>
-                                Back
-                            </Button>
-                            <Button onPress={handleSubmit(onSubmit)} isDisabled={!isValid} isLoading={isSubmitting}>
-                                Add Items To List
-                            </Button>
-                        </View>
-                    </Modal.Footer>
-                </FormProvider>
+                <View>
+                    <FormProvider {...methods}>
+                        <Modal.Body isLoading={isRecipesFetching || isRecipeCategoriesFetching} isError={isRecipesError}>
+                            <FormRow>
+                                <Picker.HookForm
+                                    label='Recipe Category'
+                                    name='recipeCategoryId'
+                                    options={[
+                                        { label: 'All categories', value: 'ALL_CATEGORIES' },
+                                        ...getRecipeCategoryOptions(recipeCategoriesData)
+                                    ]}
+                                />
+                            </FormRow>
+                            <FormRow>
+                                <ComboBox.HookForm
+                                    label='Recipe'
+                                    name='recipeName'
+                                    placeholder='Recipe name'
+                                    options={getFilteredRecipesByCategory(selectedRecipeCategoryId, recipesData || [])}
+                                />
+                            </FormRow>
+                            <View style={{ height: 200 }} />
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <View style={styles.modalFooter}>
+                                <Button color='secondary' onPress={() => setIsOpen(false)}>
+                                    Back
+                                </Button>
+                                <Button onPress={handleSubmit(onSubmit)} isDisabled={!isValid} isLoading={isSubmitting}>
+                                    Add Items To List
+                                </Button>
+                            </View>
+                        </Modal.Footer>
+                    </FormProvider>
+                </View>
             </Modal>
         </View>
     )

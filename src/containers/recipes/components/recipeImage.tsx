@@ -36,7 +36,7 @@ export function RecipeImage({ recipeId }: RecipeImageProps) {
                     style={styles.imageBackground}
                     imageStyle={styles.image}
                 >
-                    <View style={{ position: 'absolute', top: 6, left: 250 }}>
+                    <View style={styles.moreOptions}>
                         <Menu
                             title='More Recipe Options'
                             onSelect={(selectedAction) => {
@@ -86,9 +86,7 @@ export function RecipeImage({ recipeId }: RecipeImageProps) {
                     </View>
                 </ImageBackground>
             ) : (
-                <Link style={styles.uploadImageLink} onPress={() => setIsUploadImageFormOpen(true)}>
-                    Upload Image
-                </Link>
+                <Link onPress={() => setIsUploadImageFormOpen(true)}>Upload Image</Link>
             )}
             <UploadImageForm
                 isOpen={isUploadImageFormOpen}
@@ -103,16 +101,17 @@ export function RecipeImage({ recipeId }: RecipeImageProps) {
 }
 
 const styles = StyleSheet.create({
-    uploadImageLink: {
-        marginTop: 10
-    },
     imageBackground: {
-        height: 160,
-        width: 280,
-        marginTop: 10,
+        height: 80,
+        width: 100,
         position: 'relative'
     },
     image: {
         borderRadius: semantic.borderRadiusDefault
+    },
+    moreOptions: {
+        position: 'absolute',
+        top: 2,
+        left: 76
     }
 })

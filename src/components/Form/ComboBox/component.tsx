@@ -4,6 +4,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { Input } from '../Input'
 import { semantic } from '../../../designTokens'
 import { TextInputFocusEventData } from 'react-native'
+import { comboboxDropdownHeight } from './consts'
 
 type ComboBoxProps = {
     label?: string
@@ -62,7 +63,7 @@ export function _ComboBox({ label, value, setValue, options, placeholder, onBlur
                     </Pressable>
                 ) : null}
                 {showDropdown && filtered.length > 0 && (
-                    <ScrollView style={styles.dropdown} keyboardShouldPersistTaps='handled'>
+                    <ScrollView style={styles.dropdown} keyboardShouldPersistTaps='handled' nestedScrollEnabled>
                         {filtered.map((item) => {
                             return (
                                 <Pressable
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: semantic.colorBorderDefault,
         borderRadius: 5,
-        maxHeight: 200,
+        maxHeight: comboboxDropdownHeight,
         zIndex: 1
     },
     item: { padding: 10, borderBottomWidth: 1, borderBottomColor: semantic.colorBorderDefault },

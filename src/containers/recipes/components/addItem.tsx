@@ -84,7 +84,7 @@ export function AddItem({ onAdd, itemsList }: AddItemProps) {
 
 const styles = StyleSheet.create({
     outerContainer: {
-        marginTop: 30
+        marginTop: 20
     },
     innerContainer: {
         marginTop: 3,

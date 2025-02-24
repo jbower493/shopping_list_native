@@ -73,7 +73,7 @@ export function SingleMenuScreen() {
 
     return (
         <GestureHandlerRootView style={styles.main}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps='handled'>
                 <View style={styles.topContainer}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>{name}</Text>

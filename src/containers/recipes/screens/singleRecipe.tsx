@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { query } from '../../../queries'
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { FullScreenLoader } from '../../../components/Loader/FullScreen'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { semantic } from '../../../designTokens'
@@ -15,6 +15,7 @@ import { EditRecipeItem } from '../components/editRecipeItem'
 import { AddItem } from '../components/addItem'
 import { AddItemToRecipePayload } from '../../../queries/recipes/types'
 import { RecipeImage } from '../components/recipeImage'
+import { comboboxDropdownHeight } from '../../../components/Form/ComboBox/consts'
 
 export function SingleRecipeScreen() {
     const [isEditRecipeFormOpen, setIsEditRecipeFormOpen] = useState(false)
@@ -65,82 +66,86 @@ export function SingleRecipeScreen() {
         return (
             <View style={styles.currentItems}>
                 <Text style={styles.currentItemsTitle}>Items</Text>
-                <FlatList
-                    data={sortedItemsList}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <EditRecipeItem key={item.id} item={item} recipeId={id} />}
-                />
+                {sortedItemsList.map((item) => {
+                    return <EditRecipeItem key={item.id} item={item} recipeId={id} />
+                })}
             </View>
         )
     }
 
     return (
-        <View style={styles.main}>
-            <View style={styles.topContainer}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{name}</Text>
-                    <Pressable style={styles.titleEditButton} onPress={() => setIsEditRecipeFormOpen(true)}>
-                        <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
-                    </Pressable>
+        <ScrollView keyboardShouldPersistTaps='handled'>
+            <View style={styles.main}>
+                <View style={styles.topContainer}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>{name}</Text>
+                        <Pressable style={styles.titleEditButton} onPress={() => setIsEditRecipeFormOpen(true)}>
+                            <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
+                        </Pressable>
+                    </View>
+                    <MoreOptions recipeId={recipeId} recipeName={singleRecipeData.name} />
                 </View>
-                <MoreOptions recipeId={recipeId} recipeName={singleRecipeData.name} />
+                <View style={styles.recipeMetaContainer}>
+                    <RecipeImage recipeId={id} />
+                    <View style={styles.recipeMeta}>
+                        <CategoryTag categoriesData={recipeCategoriesData || []} categoryName={recipe_category?.name || 'Uncategorized'} />
+                        <View style={styles.recipeMetaBottom}>
+                            <View style={styles.recipeMetaItem}>
+                                <MaterialCommunityIcon name='timer-outline' size={22} color={semantic.colorTextPrimary} />
+
+                                <Text>{formatPrepTime(prep_time)}</Text>
+                            </View>
+                            <View style={styles.recipeMetaItem}>
+                                <MaterialCommunityIcon name='account-multiple' size={22} color={semantic.colorTextPrimary} />
+
+                                <Text>{serves || '?'}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+                <AddItem
+                    onAdd={(itemToAdd, newCategory, existingCategoryId, quantity, quantityUnitId) => {
+                        const payload: AddItemToRecipePayload = { recipeId: id.toString(), itemName: itemToAdd, quantity }
+
+                        if (newCategory) {
+                            payload.newCategory = newCategory
+                        } else if (existingCategoryId && existingCategoryId !== 'none') {
+                            payload.existingCategoryId = existingCategoryId
+                        }
+
+                        if (quantityUnitId) {
+                            payload.quantityUnitId = quantityUnitId
+                        }
+
+                        addItemToRecipe(payload)
+                    }}
+                    itemsList={itemsData || []}
+                />
+
+                {renderCurrentItems()}
+
+                <View style={styles.instructions}>
+                    <View style={styles.instructionsTitleContainer}>
+                        <Text style={styles.instructionsTitle}>Instructions</Text>
+                        <Link onPress={() => setIsInstructionsShowing((prev) => !prev)}>{isInstructionsShowing ? 'Hide' : 'Show'}</Link>
+                        <Pressable style={styles.titleEditButton} onPress={() => setIsEditRecipeFormOpen(true)}>
+                            <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
+                        </Pressable>
+                    </View>
+                    {renderInstructions()}
+                </View>
+
+                <EditRecipeForm recipeId={recipeId.toString()} isOpen={isEditRecipeFormOpen} setIsOpen={setIsEditRecipeFormOpen} />
             </View>
-            <View style={styles.recipeMeta}>
-                <CategoryTag categoriesData={recipeCategoriesData || []} categoryName={recipe_category?.name || 'Uncategorized'} />
-                <View style={styles.recipeMetaItem}>
-                    <MaterialCommunityIcon name='timer-outline' size={22} color={semantic.colorTextPrimary} />
-
-                    <Text>{formatPrepTime(prep_time)}</Text>
-                </View>
-                <View style={styles.recipeMetaItem}>
-                    <MaterialCommunityIcon name='account-multiple' size={22} color={semantic.colorTextPrimary} />
-
-                    <Text>{serves || '?'}</Text>
-                </View>
-            </View>
-
-            <RecipeImage recipeId={id} />
-
-            <View style={styles.instructions}>
-                <View style={styles.instructionsTitleContainer}>
-                    <Text style={styles.instructionsTitle}>Instructions</Text>
-                    <Link onPress={() => setIsInstructionsShowing((prev) => !prev)}>{isInstructionsShowing ? 'Hide' : 'Show'}</Link>
-                    <Pressable style={styles.titleEditButton} onPress={() => setIsEditRecipeFormOpen(true)}>
-                        <MaterialCommunityIcon name='square-edit-outline' size={22} color={semantic.colorTextPrimary} />
-                    </Pressable>
-                </View>
-                {renderInstructions()}
-            </View>
-
-            <AddItem
-                onAdd={(itemToAdd, newCategory, existingCategoryId, quantity, quantityUnitId) => {
-                    const payload: AddItemToRecipePayload = { recipeId: id.toString(), itemName: itemToAdd, quantity }
-
-                    if (newCategory) {
-                        payload.newCategory = newCategory
-                    } else if (existingCategoryId && existingCategoryId !== 'none') {
-                        payload.existingCategoryId = existingCategoryId
-                    }
-
-                    if (quantityUnitId) {
-                        payload.quantityUnitId = quantityUnitId
-                    }
-
-                    addItemToRecipe(payload)
-                }}
-                itemsList={itemsData || []}
-            />
-
-            {renderCurrentItems()}
-
-            <EditRecipeForm recipeId={recipeId.toString()} isOpen={isEditRecipeFormOpen} setIsOpen={setIsEditRecipeFormOpen} />
-        </View>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     main: {
         padding: semantic.paddingDefault,
+        paddingBottom: comboboxDropdownHeight,
         justifyContent: 'flex-start',
         flex: 1,
         alignItems: 'flex-start'
@@ -163,11 +168,18 @@ const styles = StyleSheet.create({
     titleEditButton: {
         marginTop: 3
     },
-    recipeMeta: {
-        marginTop: 15,
+    recipeMetaContainer: {
+        marginTop: 10,
         flexDirection: 'row',
-        gap: 15,
-        alignItems: 'center'
+        gap: 10,
+        alignItems: 'flex-end'
+    },
+    recipeMeta: {
+        gap: 8
+    },
+    recipeMetaBottom: {
+        flexDirection: 'row',
+        gap: 15
     },
     recipeMetaItem: {
         flexDirection: 'row',
@@ -175,7 +187,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     instructions: {
-        marginTop: 16,
+        marginTop: 25,
         width: '100%'
     },
     instructionsTitleContainer: {
