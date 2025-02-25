@@ -10,10 +10,8 @@ type DropTargetProps = {
 
 export function DropTarget({ isOpen, register, children }: DropTargetProps) {
     return (
-        <View>
-            <View onLayout={register} style={[styles.target, isOpen ? styles.openTarget : null]}>
-                {children}
-            </View>
+        <View onLayout={register} style={[styles.target, isOpen ? styles.openTarget : null]}>
+            {children}
         </View>
     )
 }

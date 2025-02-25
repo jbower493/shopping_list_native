@@ -24,6 +24,7 @@ export function SingleMenuScreen() {
 
     const { registerDropzone, getDropTarget } = useDropzones()
     const [isRecipeBeingDragged, setIsRecipeBeingDragged] = useState(false)
+    const [TEMP_dropCount, TEMP_setDropCount] = useState(0)
 
     const { data: singleMenuData, isPending: isSingleMenuPending, isError: isSingleMenuError } = query.menus.single.useQuery(menuId.toString())
     const { data: recipesData, isFetching: isRecipesFetching, isError: isRecipesError } = query.recipes.all.useQuery()
@@ -53,15 +54,21 @@ export function SingleMenuScreen() {
      * Function to call when a draggable item is released. Returns boolean to indicate whether or not a valid drop target was hit
      */
     function onDrop(finalX: number, finalY: number, recipeId: Recipe['id']) {
+        // This is a hack to get the dropzones to recalculate their layout after every drop. Not sure why they don't do that anyway
+        TEMP_setDropCount((prev) => prev + 1)
+
         const dropTarget = getDropTarget(finalX, finalY)
 
-        // If there is no drop target then don't do anything
-        if (!dropTarget) {
+        const recipe = recipes.find((recipeObj) => recipeObj.id === recipeId)
+        const existingDayOfWeek = recipe?.day_of_week?.day ?? 'NO_DAY_ASSIGNED'
+
+        // If there is no drop target, or it's the same as existing day, then don't do anything
+        if (!dropTarget || dropTarget === existingDayOfWeek) {
             return false
         }
 
         // If there is a drop target but it's not one of the day options, then it must be the "no day assigned" drop target, so we'll send null to the backend.
-        const date = dayOptions.find((option) => option.day === dropTarget)?.date || null
+        const date = dayOptions.find((option) => option.date === dropTarget)?.date || null
 
         updateMenuRecipe({
             menuId: id.toString(),
@@ -90,7 +97,11 @@ export function SingleMenuScreen() {
                 <Text style={styles.introText}>Drag and drop recipes to change the day.</Text>
                 <View style={styles.mainView}>
                     <View style={styles.day}>
-                        <DropTarget isOpen={isRecipeBeingDragged} register={(e) => registerDropzone(e, 'NO_DAY_ASSIGNED')}>
+                        <DropTarget
+                            key={`${TEMP_dropCount}_NO_DAY_ASSIGNED`}
+                            isOpen={isRecipeBeingDragged}
+                            register={(e) => registerDropzone(e, 'NO_DAY_ASSIGNED')}
+                        >
                             <Text style={styles.noDayTitle}>No Day Assigned</Text>
                         </DropTarget>
                         {[...recipes]
@@ -116,7 +127,11 @@ export function SingleMenuScreen() {
                     {dayOptions.map((dayOption) => {
                         return (
                             <View key={dayOption.date} style={styles.day}>
-                                <DropTarget isOpen={isRecipeBeingDragged} register={(e) => registerDropzone(e, dayOption.day)}>
+                                <DropTarget
+                                    key={`${TEMP_dropCount}_${dayOption.date}`}
+                                    isOpen={isRecipeBeingDragged}
+                                    register={(e) => registerDropzone(e, dayOption.date)}
+                                >
                                     <Text style={styles.dayTitle}>{dayOption.day}</Text>
                                 </DropTarget>
                                 {[...recipes]

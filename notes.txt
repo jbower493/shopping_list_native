@@ -18,5 +18,5 @@ Still todo:
 
 
 Bugs:
-- Drag and drop doesn't work properly
+- Drag and drop sometimes goes into wrong day, goes higher than the dropzone
 - Can't add "Salmon" when "salmon" is already added
